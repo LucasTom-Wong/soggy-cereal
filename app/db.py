@@ -64,3 +64,11 @@ def checkUser(username):
 def checkUserPass(username, password):
     loginsinfo = makeLoginsDict()
     return (username in loginsinfo.keys()) and (loginsinfo[username] == password)
+
+def addProfile(ID):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("INSERT INTO profiles VALUES(?, ?, ?, ?, ?)", (ID, 0, 0, 0, 0))
+    db.commit()
+    db.close()
+   
