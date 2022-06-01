@@ -37,8 +37,9 @@ async def full_all(ws, path):
         #     await asyncio.gather(messenger(user, path), random_number(user, path), listen(user, path))
     except websockets.exceptions.ConnectionClosed as e:
         connected_people.remove(ws)
-        for users in connected_people.copy():
-            await users.send("User has left")
+        # for users in connected_people.copy():
+        #     await users.send("User has left")
+        # breaks
     # await messenger(ws, path)
     # await random_number(ws, path)
     # await connected_message(ws, path)
