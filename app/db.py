@@ -72,3 +72,9 @@ def addProfile(ID):
     db.commit()
     db.close()
    
+def updateProfileMoney(ID, amount):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("UPDATE profiles SET money = money + (?) WHERE ID = (?)", (amt, ID))
+    db.commit()
+    db.close()
