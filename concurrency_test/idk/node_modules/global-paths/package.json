@@ -1,0 +1,68 @@
+{
+  "name": "global-paths",
+  "description": "Returns an array of unique \"global\" directories based on the user's platform and environment. The resulting paths can be used for doing lookups for generators or other globally installed npm packages. Node.js / JavaScript.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/jonschlinkert/global-paths",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/global-paths",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/global-paths/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "array-unique": "^0.3.2",
+    "global-modules": "^0.2.3",
+    "is-windows": "^1.0.0"
+  },
+  "devDependencies": {
+    "gulp-format-md": "^0.1.11",
+    "mocha": "^3.2.0"
+  },
+  "keywords": [
+    "directory",
+    "dirname",
+    "global",
+    "module",
+    "package",
+    "path",
+    "paths",
+    "prefix",
+    "resolve"
+  ],
+  "verb": {
+    "related": {
+      "list": [
+        "contains-path",
+        "cwd",
+        "git-config-path",
+        "global-modules",
+        "global-prefix"
+      ]
+    },
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "lint": {
+      "reflinks": true
+    },
+    "reflinks": [
+      "verb",
+      "verb-generate-readme"
+    ]
+  }
+}
