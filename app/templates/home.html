@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %} Home {% endblock %}
+
+{% block css %}
+<style>
+  body{
+    padding:4%;
+  }
+  a{
+    text-decoration:none;
+    color:white;
+  }
+  a:hover, a:active {
+    color: #7f1313;
+  }
+  #links{
+    font-size:42px;
+  }
+  h1{
+    font-size:100px;
+  }
+  h2{
+    font-size:50px;
+  }
+</style>
+{% endblock %}
+{% block body %}
+  <h1>Poker Central</h1>
+  <br>
+  <div id="links">
+    <a href="/login">Login</a><br>
+    <a href="/register">Register</a><br>
+    <a href="/poker">Play Poker</a><br>
+  </div>
+  <br>
+  <h2>HOW TO PLAY</h2>
+  <p>Insert Rules Here</p>
+
+{% endblock %}

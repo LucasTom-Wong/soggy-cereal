@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %} Register {% endblock %}
+
+{% block css %}
+<style>
+    .mb-3{
+      width:300px;
+    }
+    .form-text{
+      color:#36454F;
+    }
+    .container{
+      text-align:center
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <h1>Register</h1>
+    <form action="/register", method="POST">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <!-- label for Username -->
+            <input class="credential-input form-control" type="text" name="username" aria-describedby="usernameHelp">
+            <!-- box to input Username -->
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input class="credential-input form-control" type="password" name="password">
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="mb-3">
+            <label for="password" class="form-label">Re-enter Password</label>
+            <input class="credential-input form-control" type="password" name="reenterpasswd">
+          </div>
+        </div>
+        <!-- Register button -->
+      <input id="credential-submit" type="submit" class="btn btn-secondary" value="Register">
+      <p style="color: red">{{error}}</p>
+      </div>
+    </form>
+{% endblock %}
