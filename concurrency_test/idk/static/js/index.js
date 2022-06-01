@@ -5,6 +5,7 @@ var simple_button = document.getElementById("simple");
 // var messages = document.createElement("ul");
 ws.onmessage = function(event){
   console.log("received!");
+  // {"type": "message"}
   content = text_box.innerHTML = event.data;
   // var messages = document.getElementsByTagName("ul")[0],
   //   message = document.createElement("li"),
