@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %} Login {% endblock %}
+
+{% block css %}
+<style>
+    .mb-3{
+      width:300px;
+    }
+    .container{
+      text-align:center
+    }
+    a:hover, a:active {
+      color: #56d23f;
+    }
+    a{
+      text-decoration:none;
+      color:#7f1313;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <h1>Login</h1>
+    <form action="/auth", method="POST">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input class="credential-input form-control" type="text" name="username">
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input class="credential-input form-control" type="password" name="password">
+          </div>
+        </div>
+        <input id="credential-submit" type="submit" class="btn btn-secondary" value="Login">
+        <br>
+        <p style="color: red">{{ error }}</p>
+        <p> Don't have an account, yet? Please, <a href= "register"> register </a>! </p>
+      </div>
+    </form>
+
+{% endblock %}
