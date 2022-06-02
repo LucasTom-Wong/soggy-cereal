@@ -78,3 +78,13 @@ def updateProfileMoney(ID, amount):
     c.execute("UPDATE profiles SET money = money + (?) WHERE ID = (?)", (amt, ID))
     db.commit()
     db.close()
+
+def updateProfileWin(ID, boo):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    if (boo):
+        c.execute("UPDATE profiles SET wins = wins + 1 WHERE ID = (?)", (ID))
+    else:
+        c.execute("UPDATE profiles SET losses = losses + 1 WHERE ID = (?)", (ID))
+    db.commit()
+    db.close()
