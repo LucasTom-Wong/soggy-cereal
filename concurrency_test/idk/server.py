@@ -7,12 +7,17 @@ connected_people = set()
 
 async def listen(ws, path):
     async for message in ws:
-        for users in connected_people.copy():
-            if (users == ws): #sends if user that sent message
-                await users.send("Hi back!")
-            else:
-                await users.send("Hi there!")
-        # await ws.send("Hi back!")
+        temp_dict = json.load(message)
+        if (temp_dict.get("data-type") == "button-response"):
+            if (temp_dict.get("value") == "hello-message"):
+                await respond_hi(ws, path)
+
+async def respond_hi(ws, path):
+    for users in connected_people.copy():
+        if (users == ws): #sends if user that sent message
+            await users.send("Hi back!")
+        else:
+            await users.send("Hi there!")
 
 async def random_number(ws, path):
     while True:

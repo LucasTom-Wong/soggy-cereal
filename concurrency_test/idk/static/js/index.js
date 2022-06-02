@@ -1,3 +1,4 @@
+// import * from
 const ws = new WebSocket('ws://localhost:8080');
 var text_box = document.getElementById("core");
 var simple_button = document.getElementById("simple");
@@ -17,7 +18,16 @@ ws.onmessage = function(event){
 
 let reply = function(){
   console.log("Button pressed.");
-  ws.send("Heeehehehee")
+  let dict_data  = {
+    "data-type" : "button-response",
+    "value" : "hello-message"
+  }
+  var dict = {
+    "data-type" : "button-response",
+    "value" : "hello-message"
+  };
+  data = JSON.stringify(dict);
+  ws.send(data);
 }
 
 simple_button.addEventListener('click', reply);
