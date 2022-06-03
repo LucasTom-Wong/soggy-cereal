@@ -7,10 +7,12 @@ connected_people = set()
 
 async def listen(ws, path):
     async for message in ws:
-        temp_dict = json.load(message)
+        temp_dict = json.loads(message)
         if (temp_dict.get("data-type") == "button-response"):
             if (temp_dict.get("value") == "hello-message"):
                 await respond_hi(ws, path)
+        if (temp_dict.get("data-type") == "joining"):
+            await join_user(ws, path)
 
 async def respond_hi(ws, path):
     for users in connected_people.copy():
@@ -19,32 +21,64 @@ async def respond_hi(ws, path):
         else:
             await users.send("Hi there!")
 
+async def join_user(ws, path):
+    number_of_users = len(connected_people)
+    data = {
+        "data-type" : "user-num-return",
+        "user-num" : number_of_users+1
+    }
+    x = json.dumps(data)
+    await ws.send(x)
+
 async def random_number(ws, path):
     while True:
         response = str(int(random.random()*20))
+        data = {
+            "data-type" : "text-return",
+            "data" : response
+        }
+        x = json.dumps(data)
         for users in connected_people.copy(): #sends every user
-            await users.send(response)
+            await users.send(x)
         await asyncio.sleep(3)
 
 async def messenger(ws, path):
     while True:
-        await ws.send("Baluga")
+        data = {
+            "data-type" : "text-return",
+            "data" : "Baluga"
+        }
+        x = json.dumps(data)
+
+        await ws.send(x)
         await asyncio.sleep(5)
 
 async def full_all(ws, path):
-    connected_people.add(ws)
-    for users in connected_people.copy():
-        if (users != ws):
-            await users.send("New User has joined")
     try:
-        await asyncio.gather(messenger(ws, path), random_number(ws, path), listen(ws, path))
+        # await asyncio.gather(messenger(ws, path), random_number(ws, path), listen(ws, path))
+        connected_people.add(ws)
+        for users in connected_people.copy():
+            if (users != ws):
+                data = {
+                    "data-type" : "text-return",
+                    "data" : "New User has joined"
+                }
+                x = json.dumps(data)
+                await users.send(x)
+        await asyncio.gather(listen(ws, path))
         # for user in connected_people.copy():
         #     await asyncio.gather(messenger(user, path), random_number(user, path), listen(user, path))
     except websockets.exceptions.ConnectionClosed as e:
         connected_people.remove(ws)
-        # for users in connected_people.copy():
-        #     await users.send("User has left")
-        # breaks
+        for users in connected_people.copy():
+            if (users != ws):
+                data = {
+                    "data-type" : "text-return",
+                    "data" : "User has left"
+                }
+                x = json.dumps(data)
+                await users.send(x)
+        #breaks
     # await messenger(ws, path)
     # await random_number(ws, path)
     # await connected_message(ws, path)
