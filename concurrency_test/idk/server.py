@@ -13,7 +13,7 @@ async def listen(ws, path):
                 await respond_hi(ws, path, temp_dict)
         if (temp_dict.get("data-type") == "joining"):
             if (ws not in connected_people):
-                connected_people.add(ws)
+                connected_people.add(ws)  #if new user
                 for users in connected_people.copy():
                     if (users != ws):
                         data = {
@@ -86,8 +86,16 @@ async def full_all(ws, path):
         await asyncio.gather(listen(ws, path))
         # for user in connected_people.copy():
         #     await asyncio.gather(messenger(user, path), random_number(user, path), listen(user, path))
-    except websockets.exceptions.ConnectionClosed as e:
+    finally: #removes user
         connected_people.remove(ws)
+        # print("removed a user")
+        data = {
+            "data-type" : "text-return",
+            "data" : "Some user has left"
+        }
+        x = json.dumps(data)
+        for users in connected_people.copy():
+            await users.send(x)
         # for users in connected_people.copy():
         #     if (users != ws):
         #         data = {
