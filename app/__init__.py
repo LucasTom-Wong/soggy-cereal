@@ -29,12 +29,37 @@ def logout():
 #login takes the user object and sets cookies
 @app.route("/login",  methods=['GET', 'POST'])
 def login():
+    if islogged():
+        return render_template('poker.html')
+
     return render_template('login.html')
 
 # authentication of login; verifies login information
 @app.route("/auth", methods=['GET', 'POST'])
 def auth():
-    return redirect('/')
+    if (request.method == 'POST'):
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        #error handling for empty username
+        if username == '':
+            return render_template("login.html", error="Empty username")
+        
+
+        if not checkUser(username):
+            return render_template("login.html", error="Wrong username, double check spelling or register")
+        else:
+            if not (checkPass(username, password)):
+                return render_template("login.html", error="Wrong password")
+            else:
+                session['username'] = username
+                session['password'] = password
+                print(session['username'])
+        return redirect('/')
+    else:
+        return redirect('/login')
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
