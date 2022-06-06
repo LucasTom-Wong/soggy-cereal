@@ -22,7 +22,7 @@ function randomCard() {
 }
 
 function doThing(e) {
-  drawCard(ctx, randomCard(), e.offsetX, e.offsetY, 200);
+  drawCard(ctx, randomCard(), e.offsetX, e.offsetY);
 }
 
 slate.addEventListener("click", doThing);
