@@ -38,6 +38,7 @@ def createID():
     id = random.randint(10000, 99999)
     while id in idList:
         id = random.randint(10000, 99999)
+    return id
     db.commit()
     db.close()
 
@@ -45,7 +46,7 @@ def createID():
 def makeLoginsDict():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("SELECT * FROM logins")
+    c.execute("SELECT username, password FROM users")
     logininfo = c.fetchall()
 
     loginsinfo = {} # create a dictionary for all the login information
@@ -61,9 +62,9 @@ def checkUser(username):
     loginsinfo = makeLoginsDict()
     return username in loginsinfo.keys()
 
-def checkUserPass(username, password):
+def checkPass(username, password):
     loginsinfo = makeLoginsDict()
-    return (username in loginsinfo.keys()) and (loginsinfo[username] == password)
+    return (loginsinfo[username] == password)
 
 def addProfile(ID):
     db = sqlite3.connect(DB_FILE)
