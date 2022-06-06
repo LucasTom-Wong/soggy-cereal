@@ -12,3 +12,4 @@ thomasYu -- 5.31.2022 21:30 -- basic html, css, and __init__.py files
 lucasTom-Wong – 5.31.2022 23:99 – websocket testing, server in python, client in js (flask)
 lucasTom-Wong – 6.3.2022 – testing using json to send commands between server and client
 lucasTom-Wong – 6.5.2022 – 15:99 – websocket testing no longer breaks when exiting, json yup
+lucasTom-Wong - 6.6.2022 - 8:12 - added devlog and requirement to repo
