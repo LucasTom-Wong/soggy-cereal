@@ -27,11 +27,18 @@
 {% block body %}
   <h1>Poker Central</h1>
   <br>
+  {% if session['username'] %}
+  <div id="links">
+    <a href="/logout">Logout</a><br>
+    <a href="/poker">Play Poker</a><br>
+  </div>
+  {% else %}
   <div id="links">
     <a href="/login">Login</a><br>
     <a href="/register">Register</a><br>
     <a href="/poker">Play Poker</a><br>
   </div>
+  {% endif %}
   <br>
   <h2>HOW TO PLAY</h2>
   <p>Insert Rules Here</p>
