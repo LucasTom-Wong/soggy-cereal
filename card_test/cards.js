@@ -22,10 +22,10 @@ for (const card of allCards) {
   cardImages[card] = getImage("card_svgs/" + card + ".svg");
 }
 
-function drawImage(context, image, x, y) {
-  context.drawImage(image, x, y, cardWidth, cardHeight);
+function drawImage(context, image, x, y, width, height) {
+  context.drawImage(image, x, y, width, height);
 }
 
 function drawCard(context, card, x, y) {
-  drawImage(context, cardImages[card], x, y, cardHeight);
+  drawImage(context, cardImages[card], x, y, cardWidth, cardHeight);
 }
