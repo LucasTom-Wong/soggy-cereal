@@ -1,0 +1,14 @@
+﻿Format: firstL -- TIMESTAMP -- changes and/or additions
+--------------------------------------------------------------------------------
+thomasYu -- 5.25.2022 -- added team flag
+lucasTom-Wong -- 5.25.2022 -- linked submodule
+markZhu  -- 5.25.2022 -- created project name
+lucasTom-Wong, thomasYu, markZhu -- 5.25.2022 -- created design doc
+tomasA -- 5.26.2022 -- uploaded feedback
+lucasTom-Wong -- 5.26.2022 -- revised design doc using feedback
+markZhu -- 5.27.2022 -- updated README with roster, roles, and project description
+lucasTom-Wong -- 5.31.2022 -- some tests with node and sockets
+thomasYu -- 5.31.2022 21:30 -- basic html, css, and __init__.py files
+lucasTom-Wong – 5.31.2022 23:99 – websocket testing, server in python, client in js (flask)
+lucasTom-Wong – 6.3.2022 – testing using json to send commands between server and client
+lucasTom-Wong – 6.5.2022 – 15:99 – websocket testing no longer breaks when exiting, json yup
