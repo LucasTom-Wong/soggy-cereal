@@ -1,11 +1,11 @@
 const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 const suites = ["C", "D", "H", "S"];
-const cards = [];
+const allCards = [];
 const cardImages = {};
 
 for (const rank of ranks) {
   for (const suite of suites) {
-    cards.push(rank + suite);
+    allCards.push(rank + suite);
   }
 }
 
@@ -15,7 +15,7 @@ function getImage(path) {
   return image;
 }
 
-for (const card of cards) {
+for (const card of allCards) {
   cardImages[card] = getImage("card_svgs/" + card + ".svg");
 }
 
