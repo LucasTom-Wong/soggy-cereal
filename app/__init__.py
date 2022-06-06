@@ -1,5 +1,6 @@
 from os import urandom
 from flask import Flask, render_template, request, session, redirect
+from db import *
 import sqlite3, os.path
 import json
 import urllib
@@ -37,7 +38,28 @@ def auth():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if (request.method == 'POST'):
+        username = request.form.get("username")
+        password = request.form.get("password")
+        reenterpasswd = request.form.get("reenterpasswd")
+
+        if username == '':
+            return render_template("register.html", error="Empty username")
+        elif password == '':
+            return render_template("register.html", error="Empty password")
+        elif password != reenterpasswd:
+            return render_template("register.html", error="Passwords don't match")
+
+        if (checkUser(username)):
+            return render_template("register.html", error="Username taken already")
+        else:
+            addUser(username, password)
+            
+        return redirect("/login")
+
+    else:
         return render_template("register.html")
+
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
