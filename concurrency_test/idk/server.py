@@ -4,6 +4,7 @@ import asyncio
 import json
 
 connected_people = set()
+total_users = 0
 
 async def listen(ws, path):
     async for message in ws:
@@ -48,11 +49,16 @@ async def respond_hi(ws, path, message):
             x = json.dumps(data)
             await users.send(x)
 
+def add_one(number):
+    return number + 1
+
 async def join_user(ws, path):
-    number_of_users = len(connected_people)
+    global total_users
+    total_users = add_one(total_users)
+    # number_of_users = len(connected_people)
     data = {
         "data-type" : "user-num-return",
-        "user-num" : number_of_users
+        "user-num" : total_users
     }
     x = json.dumps(data)
     await ws.send(x)
