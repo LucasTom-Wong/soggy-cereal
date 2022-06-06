@@ -2,7 +2,9 @@ const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 const suites = ["C", "D", "H", "S"];
 const allCards = [];
 const cardImages = {};
+const cardRatio = 315 / 225;
 const cardHeight = 200;
+const cardWidth = cardHeight / cardRatio;
 
 for (const rank of ranks) {
   for (const suite of suites) {
@@ -21,7 +23,7 @@ for (const card of allCards) {
 }
 
 function drawImage(context, image, x, y) {
-  context.drawImage(image, x, y, image.width * cardHeight / image.height, cardHeight);
+  context.drawImage(image, x, y, cardWidth, cardHeight);
 }
 
 function drawCard(context, card, x, y) {
