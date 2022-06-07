@@ -2,8 +2,39 @@
 {% block title %} Play {% endblock %}
 {% block css %}
 <style>
-	#temp{
+	body{
+		background:#35654d;
 	}
+	#left{
+		width:800px;
+	}
+	.btn{
+		height:50px;
+		width:100px;
+		background:gray;
+		margin:3px;
+		border:2px solid black;
+		color:white;
+		font-size:20px;
+		outline:0px;
+	}
+	#raiseAmount{
+		width:250px;
+	}
+	#timer{
+		font-size:50px;
+	}
+	#pot{
+		font-size:50px;
+	}
+	.btn:hover {
+		background-color:white;
+		color:black;
+		transition: 0.3s;
+		border:2px solid black;
+		box-shadow:none;
+	}
+
 </style>
 {% endblock %}
 
@@ -11,94 +42,108 @@
 <div class="parent-container d-flex">
 	<div class="container" id="left">
 		<div class="row">
-			<div class="col-2">
+			<div class="col">
 				P1
 			</div>
-			<div class="col-2">
-				 <img src={{listCards[0]}} height="150px" />
+			<div class="col">
+				 <img src={{listCards[0]}} height="130px" />
 			</div>
-			<div class="col-2">
-				<img src={{listCards[1]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[1]}} height="130px" />
+			</div>
+			<div class="col">
+				Bet: 
 			</div>
 		</div><br/>
 		<div class="row">
-			<div class="col-2">
+			<div class="col">
 				P2
 			</div>
-			<div class="col-2">
-				<img src={{listCards[2]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[2]}} height="130px" />
 			</div>
-			<div class="col-2">
-				<img src={{listCards[3]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[3]}} height="130px" />
+			</div>
+			<div class="col">
+				Bet: 
 			</div>
 		</div><br/>
 		<div class="row">
-			<div class="col-2">
+			<div class="col">
 				P3
 			</div>
-			<div class="col-2">
-				<img src={{listCards[4]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[4]}} height="130px" />
 			</div>
-			<div class="col-2">
-				<img src={{listCards[5]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[5]}} height="130px" />
+			</div>
+			<div class="col">
+				Bet:
 			</div>
 		</div><br/>
 		<div class="row">
-			<div class="col-2">
+			<div class="col">
 				P4
 			</div>
-			<div class="col-2">
-				<img src={{listCards[6]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[6]}} height="130px" />
 			</div>
-			<div class="col-2">
-				<img src={{listCards[7]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[7]}} height="130px" />
+			</div>
+			<div class="col">
+				Bet: 
 			</div>
 		</div><br/>
 		<div class="row">
-			<div class="col-2">
+			<div class="col">
 				P5
 			</div>
-			<div class="col-2">
-				<img src={{listCards[8]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[8]}} height="130px" />
 			</div>
-			<div class="col-2">
-				<img src={{listCards[9]}} height="150px" />
+			<div class="col">
+				<img src={{listCards[9]}} height="130px" />
+			</div>
+			<div class="col">
+				Bet: 
 			</div>
 		</div>
 	</div>
 	<div class="container" id="right">
 		<div class="row">
-			<div class="col">
+			<div class="col" id="timer">
 				Timer:
 			</div>
-		</div>
+		</div><br>
 		<div class="row">
-			<div class="col">
+			<div class="col" id="pot">
 				Pot:
 			</div>
-		</div>
+		</div><br>
 		<div class="row">
 			<div class="col">
-				<img src="" height="150px" hidden=hidden />
+				<img src={{listCards[0]}} height="280px" />
 			</div>
 			<div class="col">
-				<img src="" height="150px" hidden=hidden />
+				<img src={{listCards[0]}} height="280px" />
 			</div>
 			<div class="col">
-				<img src="" height="150px" hidden=hidden />
+				<img src={{listCards[0]}} height="280px" />
 			</div>
 			<div class="col">
-				<img src="" height="150px" hidden=hidden />
+				<img src={{listCards[0]}} height="280px" />
 			</div>
 			<div class="col">
-				<img src="" height="150px" hidden=hidden />
+				<img src={{listCards[0]}} height="280px" />
 			</div>
-		</div>
-		<button>Fold</button>
-		<button>Check</button>
-		<form>
-			<input type="number" min="0"></input>
-			<input type="button" value="Raise"></input>
+		</div><br>
+		<button id="foldButton" class="btn">Fold</button><br>
+		<button id="checkButton" class="btn">Check</button><br>
+		<input id="raiseButton" class="btn" type="button" value="Raise"></input>
+		<input id="raiseAmount" type="number" min="0"></input>
 		</form>
 	</div>
 </div>
