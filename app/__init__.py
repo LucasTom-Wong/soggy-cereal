@@ -46,19 +46,18 @@ def auth():
         if username == '':
             return render_template("login.html", error="Empty username")
 
-
         if not checkUser(username):
             return render_template("login.html", error="Wrong username, double check spelling or register")
-        else:
-            if not (checkPass(username, password)):
-                return render_template("login.html", error="Wrong password")
-            else:
-                session['username'] = username
-                session['password'] = password
-                print(session['username'])
+
+        if not (checkPass(username, password)):
+            return render_template("login.html", error="Wrong password")
+
+        session['username'] = username
+        session['password'] = password
+        print(session['username'])
         return redirect('/')
-    else:
-        return redirect('/login')
+
+    return redirect('/login')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -70,20 +69,19 @@ def register():
 
         if username == '':
             return render_template("register.html", error="Empty username")
-        elif password == '':
+        if password == '':
             return render_template("register.html", error="Empty password")
-        elif password != reenterpasswd:
+        if password != reenterpasswd:
             return render_template("register.html", error="Passwords don't match")
 
         if (checkUser(username)):
             return render_template("register.html", error="Username taken already")
-        else:
-            addUser(username, password)
+
+        addUser(username, password)
 
         return redirect("/login")
-
-    else:
-        return render_template("register.html")
+    
+    return render_template("register.html")
 
 ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 suites = ["C", "D", "H", "S"]
