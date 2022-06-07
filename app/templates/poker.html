@@ -1,7 +1,109 @@
 {% extends "base.html" %}
-{% block title %} Home {% endblock %}
+{% block title %} Play {% endblock %}
+{% block css %}
+<style>
+	#temp{
+	}
+</style>
+{% endblock %}
 
 {% block body %}
+<div class="parent-container d-flex">
+	<div class="container" id="left">
+		<div class="row">
+			<div class="col-2">
+				P1
+			</div>
+			<div class="col-2">
+				 <img src={{listCards[0]}} height="150px" />
+			</div>
+			<div class="col-2">
+				<img src={{listCards[1]}} height="150px" />
+			</div>
+		</div><br/>
+		<div class="row">
+			<div class="col-2">
+				P2
+			</div>
+			<div class="col-2">
+				<img src={{listCards[2]}} height="150px" />
+			</div>
+			<div class="col-2">
+				<img src={{listCards[3]}} height="150px" />
+			</div>
+		</div><br/>
+		<div class="row">
+			<div class="col-2">
+				P3
+			</div>
+			<div class="col-2">
+				<img src={{listCards[4]}} height="150px" />
+			</div>
+			<div class="col-2">
+				<img src={{listCards[5]}} height="150px" />
+			</div>
+		</div><br/>
+		<div class="row">
+			<div class="col-2">
+				P4
+			</div>
+			<div class="col-2">
+				<img src={{listCards[6]}} height="150px" />
+			</div>
+			<div class="col-2">
+				<img src={{listCards[7]}} height="150px" />
+			</div>
+		</div><br/>
+		<div class="row">
+			<div class="col-2">
+				P5
+			</div>
+			<div class="col-2">
+				<img src={{listCards[8]}} height="150px" />
+			</div>
+			<div class="col-2">
+				<img src={{listCards[9]}} height="150px" />
+			</div>
+		</div>
+	</div>
+	<div class="container" id="right">
+		<div class="row">
+			<div class="col">
+				Timer:
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				Pot:
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<img src="" height="150px" hidden=hidden />
+			</div>
+			<div class="col">
+				<img src="" height="150px" hidden=hidden />
+			</div>
+			<div class="col">
+				<img src="" height="150px" hidden=hidden />
+			</div>
+			<div class="col">
+				<img src="" height="150px" hidden=hidden />
+			</div>
+			<div class="col">
+				<img src="" height="150px" hidden=hidden />
+			</div>
+		</div>
+		<button>Fold</button>
+		<button>Check</button>
+		<form>
+			<input type="number" min="0"></input>
+			<input type="button" value="Raise"></input>
+		</form>
+	</div>
+</div>
+
+<script src="../static/js/poker.js"></script>
 
 
 {% endblock %}
