@@ -80,7 +80,7 @@ def register():
         addUser(username, password)
 
         return redirect("/login")
-    
+
     return render_template("register.html")
 
 ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
@@ -91,8 +91,8 @@ for rank in ranks:
   for suite in suites:
     allCards.append("/static/card_svgs/"+rank + suite + ".svg")
 
-cardList = []
 def createCardList(player_num):
+    cardList = []
     player = 0
     index = 0
     while (player < player_num):
