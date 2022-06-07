@@ -45,7 +45,7 @@ def auth():
         #error handling for empty username
         if username == '':
             return render_template("login.html", error="Empty username")
-        
+
 
         if not checkUser(username):
             return render_template("login.html", error="Wrong username, double check spelling or register")
@@ -79,16 +79,44 @@ def register():
             return render_template("register.html", error="Username taken already")
         else:
             addUser(username, password)
-            
+
         return redirect("/login")
 
     else:
         return render_template("register.html")
 
+ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+suites = ["C", "D", "H", "S"]
+allCards = []
+
+for rank in ranks:
+  for suite in suites:
+    allCards.append("/static/card_svgs/"+rank + suite + ".svg")
+
+cardList = []
+def createCardList(player_num):
+    player = 0
+    index = 0
+    while (player < player_num):
+        cardList.append("/static/card_svgs/back.svg")
+        cardList.append("/static/card_svgs/back.svg")
+        index+=2
+        player+=1
+    cardList.append(allCards[index])
+    cardList.append(allCards[index+1])
+    index+=2
+    player+=1
+    while (player < 5):
+        cardList.append("/static/card_svgs/back.svg")
+        cardList.append("/static/card_svgs/back.svg")
+        player+=1
+    print(cardList)
+    return cardList
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
-    return render_template('poker.html')
+    return render_template('poker.html', listCards = createCardList(0))
+
 
 if __name__ == "__main__":
     app.debug = True
