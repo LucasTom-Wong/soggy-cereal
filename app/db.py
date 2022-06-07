@@ -3,25 +3,29 @@ import random
 
 DB_FILE="users.db"
 
-db = sqlite3.connect(DB_FILE)
-c = db.cursor()
+def createTables():
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
 
-command = """CREATE TABLE IF NOT EXISTS users(
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    ID INTEGER NOT NULL)
-"""
-c.execute(command)
+    command = """CREATE TABLE IF NOT EXISTS users(
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        ID INTEGER NOT NULL)
+    """
+    c.execute(command)
 
-command2 = """CREATE TABLE IF NOT EXISTS profiles(
-    ID INTEGER NOT NULL,
-    wins INTEGER NOT NULL,
-    losses INTEGER NOT NULL,
-    money INTEGER NOT NULL,
-    timesBroke INTEGER NOT NULL)
-"""
-c.execute(command2)
+    command2 = """CREATE TABLE IF NOT EXISTS profiles(
+        ID INTEGER NOT NULL,
+        wins INTEGER NOT NULL,
+        losses INTEGER NOT NULL,
+        money INTEGER NOT NULL,
+        timesBroke INTEGER NOT NULL)
+    """
+    c.execute(command2)
+    db.commit();
+    db.close();
 
+createTables();
 
 def addUser(username, password):
     db = sqlite3.connect(DB_FILE)
@@ -55,7 +59,6 @@ def makeLoginsDict():
         loginsinfo[login[0]] = login[1]
 
     return loginsinfo
-    db.commit()
     db.close()
 
 def checkUser(username):
@@ -72,7 +75,7 @@ def addProfile(ID):
     c.execute("INSERT INTO profiles VALUES(?, ?, ?, ?, ?)", (ID, 0, 0, 0, 0))
     db.commit()
     db.close()
-   
+
 def updateProfileMoney(ID, amount):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
