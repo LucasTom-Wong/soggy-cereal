@@ -1,22 +1,32 @@
-import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+$(document).ready(function() {
 
-// sending a connect request to the server.
-var socket = io.connect('http://localhost:5000');
+let namespace = '/test';
+var socket = io(namespace);
 
-// An event handler for a change of value
-$('input.sync').on('input', function(event) {
-  socket.emit('Slider value changed', {
-    who: $(this).attr('id'),
-    data: $(this).val()
+socket.on('connect', function() {
+  socket.emit('my_event', {data: 'connected to the SocketServer...'});
+});
+
+socket.on('my_response', function(msg, cb) {
+
+  $('#log').append('<br>' + $('<div/>').text('logs #' + msg.count + ': ' + msg.data).html());
+  if (cb)
+    cb();
   });
-  return false;
-});
 
-socket.on('after connect', function(msg) {
-  console.log('After connect', msg);
-});
+  $('form#emit').submit(function(event) {
+    socket.emit('my_event', {data: $('#emit_data').val()});
+    return false;
+  });
 
-socket.on('update value', function(msg) {
-  console.log('Slider value updated');
-  $('#' + msg.who).val(msg.data);
+  $('form#broadcast').submit(function(event) {
+    socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
+    return false;
+  });
+
+
+  $('form#disconnect').submit(function(event) {
+    socket.emit('disconnect_request');
+    return false;
+  });
 });
