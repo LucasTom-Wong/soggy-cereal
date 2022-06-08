@@ -1,7 +1,7 @@
 from os import urandom
 from flask import Flask, render_template, request, session, redirect
 from db import *
-from cards import createCardList
+from cards import createCardList, allCards
 import sqlite3, os.path
 import json
 import urllib
@@ -84,10 +84,69 @@ def register():
 
     return render_template("register.html")
 
+playerList = {
+    "p1":["P1", "1000"],
+    "p2":["P2", "1000"],
+    "p3":["P3", "1000"],
+    "p4":["P4", "1000"],
+    "p5":["P5", "1000"],
+}
+
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
-    return render_template('poker.html', listCards = createCardList(0))
+    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0))
 
+@app.route("/reveal_cards", methods=['GET'])
+def reveal_cards():
+    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        cards = {
+            "p1c1": allCards[0],
+            "p1c2": allCards[1],
+            "p2c1": allCards[2],
+            "p2c2": allCards[3],
+            "p3c1": allCards[4],
+            "p3c2": allCards[5],
+            "p4c1": allCards[6],
+            "p4c2": allCards[7],
+            "p5c1": allCards[8],
+            "p5c2": allCards[9],
+            "length": len(playerList)
+        }
+        return json.dumps(cards)
+    else:
+        return redirect("/")
+
+@app.route("/flop", methods=['GET'])
+def flop():
+    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        flop = {
+            "1":allCards[47],
+            "2":allCards[48],
+            "3":allCards[49],
+        }
+        return json.dumps(flop)
+    else:
+        return redirect("/")
+
+@app.route("/turn", methods=['GET'])
+def turn():
+    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        turn = {
+            "1":allCards[50],
+        }
+        return json.dumps(turn)
+    else:
+        return redirect("/")
+
+@app.route("/river", methods=['GET'])
+def river():
+    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        river = {
+            "1":allCards[51],
+        }
+        return json.dumps(river)
+    else:
+        return redirect("/")
 
 if __name__ == "__main__":
     app.debug = True

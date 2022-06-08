@@ -6,7 +6,7 @@
 		background:#35654d;
 	}
 	#left{
-		width:800px;
+		width:1250px;
 	}
 	.btn{
 		height:50px;
@@ -41,76 +41,91 @@
 {% block body %}
 <div class="parent-container d-flex">
 	<div class="container" id="left">
+		{% if num_players > 0 %}
 		<div class="row">
+				<div class="col">
+					{{player_list["p1"][0]}}<br>
+					${{player_list["p1"][1]}}
+				</div>
 			<div class="col">
-				P1
+				 <img id="p1c1" src={{listCards[0]}} height="130px" />
 			</div>
 			<div class="col">
-				 <img src={{listCards[0]}} height="130px" />
-			</div>
-			<div class="col">
-				<img src={{listCards[1]}} height="130px" />
+				<img id="p1c2" src={{listCards[1]}} height="130px" />
 			</div>
 			<div class="col">
 				Bet:
 			</div>
 		</div><br/>
+		{% endif %}
+		{% if num_players > 1 %}
 		<div class="row">
 			<div class="col">
-				P2
+				{{player_list["p2"][0]}}<br>
+				${{player_list["p2"][1]}}
 			</div>
 			<div class="col">
-				<img src={{listCards[2]}} height="130px" />
+				<img id="p2c1" src={{listCards[2]}} height="130px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[3]}} height="130px" />
+				<img id="p2c2" src={{listCards[3]}} height="130px" />
 			</div>
 			<div class="col">
 				Bet:
 			</div>
 		</div><br/>
+		{% endif %}
+		{% if num_players > 2 %}
 		<div class="row">
 			<div class="col">
-				P3
+				{{player_list["p3"][0]}}<br>
+				${{player_list["p3"][1]}}
 			</div>
 			<div class="col">
-				<img src={{listCards[4]}} height="130px" />
+				<img id="p3c1" src={{listCards[4]}} height="130px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[5]}} height="130px" />
+				<img id="p3c2" src={{listCards[5]}} height="130px" />
 			</div>
 			<div class="col">
 				Bet:
 			</div>
 		</div><br/>
+		{% endif %}
+		{% if num_players > 3 %}
 		<div class="row">
 			<div class="col">
-				P4
+				{{player_list["p4"][0]}}<br>
+				${{player_list["p4"][1]}}
 			</div>
 			<div class="col">
-				<img src={{listCards[6]}} height="130px" />
+				<img id="p4c1" src={{listCards[6]}} height="130px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[7]}} height="130px" />
+				<img id="p4c2" src={{listCards[7]}} height="130px" />
 			</div>
 			<div class="col">
 				Bet:
 			</div>
 		</div><br/>
+		{% endif %}
+		{% if num_players > 4 %}
 		<div class="row">
 			<div class="col">
-				P5
+				{{player_list["p5"][0]}}<br>
+				${{player_list["p5"][1]}}
 			</div>
 			<div class="col">
-				<img src={{listCards[8]}} height="130px" />
+				<img id="p5c1" src={{listCards[8]}} height="130px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[9]}} height="130px" />
+				<img id="p5c2" src={{listCards[9]}} height="130px" />
 			</div>
 			<div class="col">
 				Bet:
 			</div>
 		</div>
+		{% endif %}
 	</div>
 	<div class="container" id="right">
 		<div class="row">
@@ -125,23 +140,24 @@
 		</div><br>
 		<div class="row">
 			<div class="col">
-				<img src={{listCards[0]}} height="280px" />
+				<img id="commc1" src="/static/card_svgs/back.svg" height="280px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[0]}} height="280px" />
+				<img id="commc2" src="/static/card_svgs/back.svg" height="280px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[0]}} height="280px" />
+				<img id="commc3" src="/static/card_svgs/back.svg" height="280px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[0]}} height="280px" />
+				<img id="commc4" src="/static/card_svgs/back.svg" height="280px" />
 			</div>
 			<div class="col">
-				<img src={{listCards[0]}} height="280px" />
+				<img id="commc5" src="/static/card_svgs/back.svg" height="280px" />
 			</div>
 		</div><br>
 		<button id="foldButton" class="btn">Fold</button><br>
 		<button id="checkButton" class="btn">Check</button><br>
+		<button id="callButton" class="btn">Call</button><br>
 		<input id="raiseButton" class="btn" type="button" value="Raise"></input>
 		<input id="raiseAmount" type="number" min="0"></input>
 	</div>
