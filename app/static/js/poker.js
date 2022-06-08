@@ -114,3 +114,26 @@ function revealRiver(){
       commc5.src = riverDict["1"];
     });
 }
+
+let username = document.getElementById("username").innerHTML;
+function updateUserName(x){ //delete later
+  username = x;
+}
+
+$(document).ready(function() {
+
+let namespace = '/test';
+var socket = io(namespace);
+
+socket.on('connect', function() {
+  let dict_data  = {
+    "user" : username,
+    "value" : "hello-server" //technically unneeded
+
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit('join_lobby', {data: data});
+  console.log("Connecting!!")
+});
+
+});

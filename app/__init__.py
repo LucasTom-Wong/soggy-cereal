@@ -1,13 +1,20 @@
 from os import urandom
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, copy_current_request_context
 from db import *
 from cards import createCardList, allCards
 import sqlite3, os.path
 import json
 import urllib
 import random
+from flask_socketio import SocketIO, emit, disconnect
+from threading import Lock
 
+async_mode = None
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socket_ = SocketIO(app, async_mode=async_mode)
+thread = None
+thread_lock = Lock()
 app.secret_key = urandom(32)
 
 def islogged():
@@ -94,7 +101,7 @@ playerList = {
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
-    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0))
+    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0), async_mode=socket_.async_mode)
 
 @app.route("/reveal_cards", methods=['GET'])
 def reveal_cards():
@@ -148,6 +155,13 @@ def river():
     else:
         return redirect("/")
 
+@socket_.on('connect', namespace='/test')
+def test_message(message):
+    print("Message recieved from client:" + message["data"].get("user"))
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': message['data'], 'count': session['receive_count']})
+
 if __name__ == "__main__":
     app.debug = True
-    app.run()
+    socket_.run(app, debug=True)
