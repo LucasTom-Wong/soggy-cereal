@@ -111,15 +111,18 @@ global numPlayers
 numPlayers = 0
 global playerList
 playerList = {
-    "gameState": "not started",
+    "gameState": -1,
     1:["P1", "1000"],
     2:["P2", "1000"],
     3:["P3", "1000"],
     4:["P4", "1000"],
     5:["P5", "1000"],
-    "start_turn":1,
+    "folded": [],
+    "dealer":1,
+    "start_turn":3,
     "turn":1,
-    "previous_bet":100
+    "previous_bet":100,
+    "check":False
 }
 
 global playerNum
@@ -191,7 +194,7 @@ def river():
 def getBet():
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
         bet = {
-            "bet":playerList['previous_bet'],
+            "bet":playerList['check'],
         }
         return json.dumps(bet)
     else:
@@ -206,7 +209,7 @@ def test_message(message):
     global playerList
     playerList[numPlayers] = [x['user'], getMoney(x['user'])]
     if (numPlayers == 5):
-        playerList['gameState'] = "start"
+        playerList['gameState'] = 0
         playerList['turn'] = playerList['turn']+3
     returnMessage = {
         "hole1": [allCards[0], allCards[1]],
@@ -227,13 +230,27 @@ def test_message(message):
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
+    current = playerList['turn']
+    playerList['folded'].append(playerList['turn'])
+    print(playerList['folded'])
     if (playerList['turn'] == 5):
         playerList['turn'] = 1;
     else:
         playerList['turn'] = playerList['turn']+1
+
+    while playerList['turn'] in playerList['folded']:
+        if (playerList['turn'] == 5):
+            playerList['turn'] = 1;
+        else:
+            playerList['turn'] = playerList['turn']+1
+    if (playerList['turn'] == playerList['start_turn']):
+        playerList['gameState'] = playerList['gameState'] +1
+        playerList['check'] = True
     returnMessage = {
         "data-type" : "console message",
+        "gameState" : playerList['gameState'],
         "fold_user" : x['user'],
+        "current_turn" : current,
         "next_turn" : playerList['turn'],
         "next_user" : playerList[playerList['turn']][0]
     }
@@ -245,9 +262,26 @@ def fold_message_global(message):
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
     x = json.loads(message["data"])
+    current = playerList['turn']
+    if (playerList['turn'] == 5):
+        playerList['turn'] = 1;
+    else:
+        playerList['turn'] = playerList['turn']+1
+    while playerList['turn'] in playerList['folded']:
+        if (playerList['turn'] == 5):
+            playerList['turn'] = 1;
+        else:
+            playerList['turn'] = playerList['turn']+1
+    if (playerList['turn'] == playerList['start_turn']):
+        playerList['gameState'] = playerList['gameState'] +1
+        playerList['check'] = True
     returnMessage = {
         "data-type" : "console message",
-        "message" : "user: " + x.get("user") + "checked!"
+        "gameState" : playerList['gameState'],
+        "bet" : playerList['check'],
+        "current_turn" : current,
+        "next_turn" : playerList['turn'],
+        "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
     emit('check_response',
@@ -257,14 +291,25 @@ def check_message_global(message):
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
     x = json.loads(message["data"])
+    current = playerList['turn']
     if (playerList['turn'] == 5):
         playerList['turn'] = 1;
     else:
         playerList['turn'] = playerList['turn']+1
+    while playerList['turn'] in playerList['folded']:
+        if (playerList['turn'] == 5):
+            playerList['turn'] = 1;
+        else:
+            playerList['turn'] = playerList['turn']+1
+    if (playerList['turn'] == playerList['start_turn']):
+        playerList['gameState'] = playerList['gameState'] +1
+        playerList['check'] = True
     returnMessage = {
         "data-type" : "console message",
+        "gameState" : playerList['gameState'],
         "call_user" : x['user'],
         "previous_bet" : playerList['previous_bet'],
+        "current_turn" : current,
         "next_turn" : playerList['turn'],
         "next_user" : playerList[playerList['turn']][0]
     }
@@ -276,15 +321,25 @@ def call_message_global(message):
 @socket_.on("raise_event", namespace="/test")
 def raise_message_global(message):
     x = json.loads(message["data"])
+    current = playerList['turn']
+    playerList['check'] = False
+    playerList['start_turn'] = playerList['turn']
     if (playerList['turn'] == 5):
         playerList['turn'] = 1;
     else:
         playerList['turn'] = playerList['turn']+1
+    while playerList['turn'] in playerList['folded']:
+        if (playerList['turn'] == 5):
+            playerList['turn'] = 1;
+        else:
+            playerList['turn'] = playerList['turn']+1
     playerList['previous_bet'] = playerList['previous_bet']+100
     returnMessage = {
         "data-type" : "console message",
+        "gameState" : playerList['gameState'],
         "raise_user" : x['user'],
         "previous_bet" : playerList['previous_bet'],
+        "current_turn" : current,
         "next_turn" : playerList['turn'],
         "next_user" : playerList[playerList['turn']][0]
     }
