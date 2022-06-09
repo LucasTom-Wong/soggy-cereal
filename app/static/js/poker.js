@@ -60,6 +60,33 @@ function sendFoldMessage(){
   console.log("folding server");
 }
 
+function sendCheckMessage(){
+  let dict_data = {
+    "user" : username
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit("check_event", {data: data});
+  console.log("checking server");
+}
+
+function sendCallMessage(){
+  let dict_data = {
+    "user" : username
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit("call_event", {data: data});
+  console.log("calling server");
+}
+
+function sendRaiseMessage(){
+  let dict_data = {
+    "user" : username
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit("raise_event", {data: data});
+  console.log("raising server");
+}
+
 function fold(){
   console.log("fold");
   sendFoldMessage();
@@ -70,6 +97,7 @@ buttonFold.addEventListener('click', fold);
 
 function check(){
   console.log("check");
+  sendCheckMessage();
   disableButtons();
 }
 
@@ -77,6 +105,7 @@ buttonCheck.addEventListener('click', check);
 
 function call(){
   console.log("call");
+  sendCallMessage();
   disableButtons();
 }
 
@@ -84,6 +113,7 @@ buttonCall.addEventListener('click', call);
 
 function raise(){
   console.log("raise");
+  sendRaiseMessage();
   disableButtons();
 }
 

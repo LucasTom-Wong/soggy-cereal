@@ -179,6 +179,42 @@ def fold_message_global(message):
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
+@socket_.on("check_event", namespace="/test")
+def fold_message_global(message):
+    x = json.loads(message["data"])
+    returnMessage = {
+        "data-type" : "console message",
+        "message" : "user: " + x.get("user") + "checked!"
+    }
+    y = json.dumps(returnMessage)
+    emit('response',
+         {'data': y, 'count': session['receive_count']},
+         broadcast=True)
+
+@socket_.on("call_event", namespace="/test")
+def fold_message_global(message):
+    x = json.loads(message["data"])
+    returnMessage = {
+        "data-type" : "console message",
+        "message" : "user: " + x.get("user") + "called!"
+    }
+    y = json.dumps(returnMessage)
+    emit('response',
+         {'data': y, 'count': session['receive_count']},
+         broadcast=True)
+
+@socket_.on("raise_event", namespace="/test")
+def fold_message_global(message):
+    x = json.loads(message["data"])
+    returnMessage = {
+        "data-type" : "console message",
+        "message" : "user: " + x.get("user") + "raised!"
+    }
+    y = json.dumps(returnMessage)
+    emit('response',
+         {'data': y, 'count': session['receive_count']},
+         broadcast=True)
+
 # @socket_.on('disconnect_request', namespace='/test')
 # def disconnect_request():
 #     @copy_current_request_context
