@@ -104,7 +104,7 @@ def game():
     if "username" in session:
         username = session["username"]
     print("username is:", username)
-    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0), async_mode=socket_.async_mode)
+    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0), username = username, async_mode=socket_.async_mode)
 
 @app.route("/reveal_cards", methods=['GET'])
 def reveal_cards():
