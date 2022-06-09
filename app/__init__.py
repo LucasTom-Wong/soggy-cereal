@@ -90,6 +90,9 @@ def register():
 
     return render_template("register.html")
 
+def makeJSON(input):
+    return json.dumps(input)
+
 #TEMPORARY (adapted for lobbies later)
 global numPlayers
 numPlayers = 0
@@ -114,7 +117,7 @@ def game():
     if "username" in session:
         username = session["username"]
         print("username is:", username)
-        return render_template('poker.html', num_players=playerNum, player_list=playerList, listCards = createCardList(0), username = username, async_mode=socket_.async_mode)
+        return render_template('poker.html', num_players=playerNum, player_list=playerList, listCards = createCardList(numPlayers), username = username, async_mode=socket_.async_mode)
     else:
         return render_template('login.html')
 
