@@ -4,20 +4,20 @@ buttonCall = document.getElementById("callButton");
 buttonRaise = document.getElementById("raiseButton");
 amountRaise = document.getElementById("raiseAmount");
 
-function disableButtons(){
-  buttonFold.disabled = true;
-  buttonCheck.disabled = true;
-  buttonCall.disabled = true;
-  buttonRaise.disabled = true;
-  amountRaise.disabled = true;
-}
-
-function enableButtons(){
-  buttonFold.disabled = false;
-  buttonCheck.disabled = false;
-  buttonCall.disabled = false;
-  buttonRaise.disabled = false;
-  amountRaise.disabled = false;
+function updateButtons(user, currentUser){
+  if (user == currentUser){
+    buttonFold.disabled = false;
+    buttonCheck.disabled = false;
+    buttonCall.disabled = false;
+    buttonRaise.disabled = false;
+    amountRaise.disabled = false;
+  }else{
+    buttonFold.disabled = true;
+    buttonCheck.disabled = true;
+    buttonCall.disabled = true;
+    buttonRaise.disabled = true;
+    amountRaise.disabled = true;
+  }
 }
 
 let username = document.getElementById("username").innerHTML;
@@ -49,7 +49,24 @@ socket.on("response", function(msg, cb){ //when recieving response
     let message = parsedResponse["message"];
     console.log(message);
   }
+
+  if (parsedResponse["playerList"]['gameState'] == "start"){
+    startTurn = parsedResponse["playerList"]['start_turn'];
+    start(startTurn, parsedResponse["playerList"]);
+    updateButtons(document.getElementById("username").innerHTML, parsedResponse["playerList"][parsedResponse["playerList"]['turn']][0]);
+    for (i = 1; i <=5; i++){
+      document.getElementById("user"+i).innerHTML = parsedResponse["playerList"][i][0];
+      document.getElementById("money"+i).innerHTML = "$"+parsedResponse["playerList"][i][1];
+    }
+  }
 })
+
+function start(playerTurn, playerList){
+  document.getElementById("dealer"+playerTurn).removeAttribute("hidden");
+  document.getElementById("bet"+(playerTurn+1)).innerHTML = "Bet: <br> $50";
+  document.getElementById("bet"+(playerTurn+2)).innerHTML = "Bet: <br> $100";
+  playerList['turn'] = playerList['turn']+3;
+}
 
 function sendFoldMessage(){
   let dict_data = {
@@ -87,10 +104,10 @@ function sendRaiseMessage(){
   console.log("raising server");
 }
 
-function fold(){
+function fold(user){
   console.log("fold");
   sendFoldMessage();
-  disableButtons();
+  updateButtons(user, username);
 }
 
 buttonFold.addEventListener('click', fold);
@@ -98,7 +115,7 @@ buttonFold.addEventListener('click', fold);
 function check(){
   console.log("check");
   sendCheckMessage();
-  disableButtons();
+  updateButtons(user, username);
 }
 
 buttonCheck.addEventListener('click', check);
@@ -106,7 +123,7 @@ buttonCheck.addEventListener('click', check);
 function call(){
   console.log("call");
   sendCallMessage();
-  disableButtons();
+  updateButtons(user, username);
 }
 
 buttonCall.addEventListener('click', call);
@@ -114,7 +131,7 @@ buttonCall.addEventListener('click', call);
 function raise(){
   console.log("raise");
   sendRaiseMessage();
-  disableButtons();
+  updateButtons(user, username);
 }
 
 buttonRaise.addEventListener('click', raise);

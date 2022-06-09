@@ -23,7 +23,7 @@ createTables();
 def addUser(username, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("INSERT INTO users VALUES(?, ?, 0, 0, 0, 0)", (username, password))
+    c.execute("INSERT INTO users VALUES(?, ?, 0, 0, 10000, 0)", (username, password))
     db.commit()
     db.close()
 
@@ -71,5 +71,13 @@ def updateUserWinLoss(username, boo):
         c.execute("UPDATE users SET wins = wins + 1 WHERE username = (?)", (username,))
     else:
         c.execute("UPDATE users SET losses = losses + 1 WHERE username = (?)", (username,))
+    db.commit()
+    db.close()
+
+def getMoney(username):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("SELECT money FROM users WHERE username = (?)", (''+username))
+    return c.fetchall()[0][0]
     db.commit()
     db.close()

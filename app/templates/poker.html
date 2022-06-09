@@ -34,19 +34,22 @@
 		border:2px solid black;
 		box-shadow:none;
 	}
+	.dealer{
+		color:red;
+	}
 
 </style>
 {% endblock %}
 
 {% block body %}
-<p id="username" hidden=True> {{username}} </p>
+<p id="username" hidden=True>{{username}}</p>
 <div class="parent-container d-flex">
 	<div class="container" id="left">
-		{% if num_players > 0 %}
 		<div class="row">
 				<div class="col">
-					{{player_list["p1"][0]}}<br>
-					${{player_list["p1"][1]}}
+					<p id="user1">{{player_list[1][0]}}</p>
+					<p id="money1">${{player_list[1][1]}}</p>
+					<p class="dealer" id="dealer1" hidden="True">Dealer</p>
 				</div>
 			<div class="col">
 				 <img id="p1c1" src={{listCards[0]}} height="130px" />
@@ -54,16 +57,15 @@
 			<div class="col">
 				<img id="p1c2" src={{listCards[1]}} height="130px" />
 			</div>
-			<div class="col">
-				Bet:
+			<div class="col" id="bet1">
+				Bet:<br>$0
 			</div>
 		</div><br/>
-		{% endif %}
-		{% if num_players > 1 %}
 		<div class="row">
 			<div class="col">
-				{{player_list["p2"][0]}}<br>
-				${{player_list["p2"][1]}}
+				<p id="user2">{{player_list[2][0]}}</p>
+				<p id="money2">${{player_list[2][1]}}</p>
+				<p class="dealer" id="dealer2" hidden="True">Dealer</p>
 			</div>
 			<div class="col">
 				<img id="p2c1" src={{listCards[2]}} height="130px" />
@@ -71,16 +73,15 @@
 			<div class="col">
 				<img id="p2c2" src={{listCards[3]}} height="130px" />
 			</div>
-			<div class="col">
-				Bet:
+			<div class="col" id="bet2">
+				Bet:<br>$0
 			</div>
 		</div><br/>
-		{% endif %}
-		{% if num_players > 2 %}
 		<div class="row">
 			<div class="col">
-				{{player_list["p3"][0]}}<br>
-				${{player_list["p3"][1]}}
+				<p id="user3">{{player_list[3][0]}}</p>
+				<p id="money3">${{player_list[3][1]}}</p>
+				<p class="dealer" id="dealer3" hidden="True">Dealer</p>
 			</div>
 			<div class="col">
 				<img id="p3c1" src={{listCards[4]}} height="130px" />
@@ -88,16 +89,15 @@
 			<div class="col">
 				<img id="p3c2" src={{listCards[5]}} height="130px" />
 			</div>
-			<div class="col">
-				Bet:
+			<div class="col" id="bet3">
+				Bet:<br>$0
 			</div>
 		</div><br/>
-		{% endif %}
-		{% if num_players > 3 %}
 		<div class="row">
 			<div class="col">
-				{{player_list["p4"][0]}}<br>
-				${{player_list["p4"][1]}}
+				<p id="user4">{{player_list[4][0]}}</p>
+				<p id="money4">${{player_list[4][1]}}</p>
+				<p class="dealer" id="dealer4" hidden="True">Dealer</p>
 			</div>
 			<div class="col">
 				<img id="p4c1" src={{listCards[6]}} height="130px" />
@@ -105,16 +105,15 @@
 			<div class="col">
 				<img id="p4c2" src={{listCards[7]}} height="130px" />
 			</div>
-			<div class="col">
-				Bet:
+			<div class="col" id="bet4">
+				Bet:<br>$0
 			</div>
 		</div><br/>
-		{% endif %}
-		{% if num_players > 4 %}
 		<div class="row">
 			<div class="col">
-				{{player_list["p5"][0]}}<br>
-				${{player_list["p5"][1]}}
+				<p id="user5">{{player_list[5][0]}}</p>
+				<p id="money5">${{player_list[5][1]}}</p>
+				<p class="dealer" id="dealer5" hidden="True">Dealer</p>
 			</div>
 			<div class="col">
 				<img id="p5c1" src={{listCards[8]}} height="130px" />
@@ -122,11 +121,10 @@
 			<div class="col">
 				<img id="p5c2" src={{listCards[9]}} height="130px" />
 			</div>
-			<div class="col">
-				Bet:
+			<div class="col" id="bet5">
+				Bet:<br>$0
 			</div>
 		</div>
-		{% endif %}
 	</div>
 	<div class="container" id="right">
 		<div class="row">

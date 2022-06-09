@@ -90,21 +90,33 @@ def register():
 
     return render_template("register.html")
 
+#TEMPORARY (adapted for lobbies later)
+global numPlayers
+numPlayers = 0
+global playerList
 playerList = {
-    "p1":["P1", "1000"],
-    "p2":["P2", "1000"],
-    "p3":["P3", "1000"],
-    "p4":["P4", "1000"],
-    "p5":["P5", "1000"],
+    "gameState": "not started",
+    1:["P1", "1000"],
+    2:["P2", "1000"],
+    3:["P3", "1000"],
+    4:["P4", "1000"],
+    5:["P5", "1000"],
+    "start_turn":1,
+    "turn":1
 }
+
+global playerNum
+playerNum=5;
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
     username = "bob"
     if "username" in session:
         username = session["username"]
-    print("username is:", username)
-    return render_template('poker.html', num_players=len(playerList), player_list=playerList, listCards = createCardList(0), username = username, async_mode=socket_.async_mode)
+        print("username is:", username)
+        return render_template('poker.html', num_players=playerNum, player_list=playerList, listCards = createCardList(0), username = username, async_mode=socket_.async_mode)
+    else:
+        return render_template('login.html')
 
 @app.route("/reveal_cards", methods=['GET'])
 def reveal_cards():
@@ -162,14 +174,22 @@ def river():
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     x = json.loads(message["data"])
-
+    global numPlayers
+    numPlayers = numPlayers + 1
+    global playerList
+    playerList[numPlayers] = [x['user'], getMoney(x['user'])]
+    if (numPlayers == 5):
+        playerList['gameState'] = "start"
     returnMessage = {
+        "playerList": playerList,
         "data-type" : "console message",
         "message" : "connected!!! lets go! welcome user: " + x.get("user")
     }
     y = json.dumps(returnMessage)
+    print(playerList)
+    print(numPlayers)
     emit('response',
-         {'data': y, 'count': session['receive_count']})
+         {'data': y, 'count': session['receive_count']}, broadcast=True)
 
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
