@@ -60,7 +60,7 @@ def addProfile(ID):
 def updateUserMoney(username, amount):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("UPDATE users SET money = money + (?) WHERE username = (?)", (amt, username))
+    c.execute("UPDATE users SET money = money + (?) WHERE username = (?)", (amount, username))
     db.commit()
     db.close()
 
