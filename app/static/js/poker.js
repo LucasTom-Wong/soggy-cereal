@@ -137,9 +137,13 @@ socket.on('connect', function() { //when it connects to the server
 });
 
 socket.on("response", function(msg, cb){
-  let message = msg.data;
-  //JSON.parse(event.data);
-  console.log(message);
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+
+  if (parsedResponse["data-type"] == "console message"){
+    let message = parsedResponse["message"];
+    console.log(message);
+  }
 })
 
 });

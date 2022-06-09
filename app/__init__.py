@@ -160,8 +160,13 @@ def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     x = json.loads(message["data"])
 
+    returnMessage = {
+        "data-type" : "console message",
+        "message" : "connected!!! lets go! welcome user: " + x.get("user")
+    }
+    y = json.dumps(returnMessage)
     emit('response',
-         {'data': "hello: " + x["user"], 'count': session['receive_count']})
+         {'data': y, 'count': session['receive_count']})
 
 if __name__ == "__main__":
     app.debug = True
