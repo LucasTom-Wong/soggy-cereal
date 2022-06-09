@@ -155,12 +155,13 @@ def river():
     else:
         return redirect("/")
 
-@socket_.on('connect', namespace='/test')
+@socket_.on('my_event', namespace='/test')
 def test_message(message):
-    print("Message recieved from client:" + message["data"].get("user"))
     session['receive_count'] = session.get('receive_count', 0) + 1
+    x = json.loads(message["data"])
+
     emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']})
+         {'data': "hello: " + x["user"], 'count': session['receive_count']})
 
 if __name__ == "__main__":
     app.debug = True

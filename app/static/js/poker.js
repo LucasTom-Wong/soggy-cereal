@@ -125,15 +125,21 @@ $(document).ready(function() {
 let namespace = '/test';
 var socket = io(namespace);
 
-socket.on('connect', function() {
+socket.on('connect', function() { //when it connects to the server
+  console.log("Attempting to connect!");
   let dict_data  = {
-    "user" : username,
-    "value" : "hello-server" //technically unneeded
-
+    "user" : username
   }
   let data = JSON.stringify(dict_data);
-  socket.emit('join_lobby', {data: data});
-  console.log("Connecting!!")
+
+  socket.emit('my_event', {data: data});
+  console.log("Connecting/Connected!");
 });
+
+socket.on("my_response", function(msg, cb){
+  let message = msg.data;
+  //JSON.parse(event.data);
+  console.log(message);
+})
 
 });
