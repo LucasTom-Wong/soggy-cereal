@@ -20,8 +20,49 @@ function enableButtons(){
   amountRaise.disabled = false;
 }
 
+let username = document.getElementById("username").innerHTML;
+function updateUserName(x){ //delete later
+  username = x;
+}
+
+$(document).ready(function() {
+
+let namespace = '/test';
+var socket = io(namespace);
+
+socket.on('connect', function() { //when it connects to the server
+  console.log("Attempting to connect!");
+  let dict_data  = {
+    "user" : username
+  }
+  let data = JSON.stringify(dict_data);
+
+  socket.emit('connecting', {data: data});
+  console.log("Connecting/Connected!");
+});
+
+socket.on("response", function(msg, cb){ //when recieving response
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+
+  if (parsedResponse["data-type"] == "console message"){
+    let message = parsedResponse["message"];
+    console.log(message);
+  }
+})
+
+function sendFoldMessage(){
+  let dict_data = {
+    "user" : username
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit("fold_event", {data: data});
+  console.log("folding server");
+}
+
 function fold(){
   console.log("fold");
+  sendFoldMessage();
   disableButtons();
 }
 
@@ -114,36 +155,4 @@ function revealRiver(){
       commc5.src = riverDict["1"];
     });
 }
-
-let username = document.getElementById("username").innerHTML;
-function updateUserName(x){ //delete later
-  username = x;
-}
-
-$(document).ready(function() {
-
-let namespace = '/test';
-var socket = io(namespace);
-
-socket.on('connect', function() { //when it connects to the server
-  console.log("Attempting to connect!");
-  let dict_data  = {
-    "user" : username
-  }
-  let data = JSON.stringify(dict_data);
-
-  socket.emit('connecting', {data: data});
-  console.log("Connecting/Connected!");
-});
-
-socket.on("response", function(msg, cb){
-  let response = msg.data;
-  let parsedResponse = JSON.parse(msg["data"]);
-
-  if (parsedResponse["data-type"] == "console message"){
-    let message = parsedResponse["message"];
-    console.log(message);
-  }
-})
-
 });

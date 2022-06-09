@@ -67,7 +67,6 @@ def auth():
 
     return redirect('/login')
 
-
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if (request.method == 'POST'):
@@ -167,6 +166,29 @@ def test_message(message):
     y = json.dumps(returnMessage)
     emit('response',
          {'data': y, 'count': session['receive_count']})
+
+@socket_.on("fold_event", namespace="/test")
+def fold_message_global(message):
+    x = json.loads(message["data"])
+    returnMessage = {
+        "data-type" : "console message",
+        "message" : "user: " + x.get("user") + "folded!"
+    }
+    y = json.dumps(returnMessage)
+    emit('response',
+         {'data': y, 'count': session['receive_count']},
+         broadcast=True)
+
+# @socket_.on('disconnect_request', namespace='/test')
+# def disconnect_request():
+#     @copy_current_request_context
+#     def can_disconnect():
+#         disconnect()
+#
+#     session['receive_count'] = session.get('receive_count', 0) + 1
+#     emit('my_response',
+#          {'data': 'Disconnected!', 'count': session['receive_count']},
+#          callback=can_disconnect)
 
 if __name__ == "__main__":
     app.debug = True
