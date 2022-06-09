@@ -2,7 +2,6 @@ buttonFold = document.getElementById("foldButton");
 buttonCheck = document.getElementById("checkButton");
 buttonCall = document.getElementById("callButton");
 buttonRaise = document.getElementById("raiseButton");
-amountRaise = document.getElementById("raiseAmount");
 
 function updateButtons(user, currentUser){
   if (user == currentUser){
@@ -10,13 +9,11 @@ function updateButtons(user, currentUser){
     buttonCheck.disabled = false;
     buttonCall.disabled = false;
     buttonRaise.disabled = false;
-    amountRaise.disabled = false;
   }else{
     buttonFold.disabled = true;
     buttonCheck.disabled = true;
     buttonCall.disabled = true;
     buttonRaise.disabled = true;
-    amountRaise.disabled = true;
   }
 }
 
@@ -111,13 +108,26 @@ socket.on('fold_response', function(msg){
 });
 
 function sendCheckMessage(){
+  let previousBet;
+  $.get("/previous_bet", function(bet) {
+    let previous_bet = JSON.parse(bet);
+    previousBet = previous_bet['bet'];
+  });
   let dict_data = {
     "user" : username
   }
   let data = JSON.stringify(dict_data);
-  socket.emit("check_event", {data: data});
-  console.log("checking server");
+  if (previousBet === "0"){
+    socket.emit("check_event", {data: data});
+    console.log("checking server");
+  }
 }
+
+socket.on('check_response', function(msg){
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+});
 
 function sendCallMessage(){
   let dict_data = {
@@ -133,7 +143,7 @@ socket.on('call_response', function(msg){
   let parsedResponse = JSON.parse(msg["data"]);
 
   if (parsedResponse['next_turn'] == 1){
-    document.getElementById("bet5").innerHTML = "Bet:<br>"+parsedResponse['previous_bet'];
+    document.getElementById("bet5").innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
   }else{
     document.getElementById("bet"+(parsedResponse['next_turn']-1)).innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
   }
@@ -148,6 +158,18 @@ function sendRaiseMessage(){
   socket.emit("raise_event", {data: data});
   console.log("raising server");
 }
+
+socket.on('raise_response', function(msg){
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+
+  if (parsedResponse['next_turn'] == 1){
+    document.getElementById("bet5").innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
+  }else{
+    document.getElementById("bet"+(parsedResponse['next_turn']-1)).innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
+  }
+  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+});
 
 function fold(user){
   console.log("fold");

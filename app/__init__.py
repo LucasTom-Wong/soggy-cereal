@@ -187,6 +187,16 @@ def river():
     else:
         return redirect("/")
 
+@app.route("/previous_bet", methods=['GET'])
+def getBet():
+    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        bet = {
+            "bet":playerList['previous_bet'],
+        }
+        return json.dumps(bet)
+    else:
+        return redirect("/")
+
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
@@ -240,7 +250,7 @@ def check_message_global(message):
         "message" : "user: " + x.get("user") + "checked!"
     }
     y = json.dumps(returnMessage)
-    emit('response',
+    emit('check_response',
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
@@ -270,6 +280,7 @@ def raise_message_global(message):
         playerList['turn'] = 1;
     else:
         playerList['turn'] = playerList['turn']+1
+    playerList['previous_bet'] = playerList['previous_bet']+100
     returnMessage = {
         "data-type" : "console message",
         "raise_user" : x['user'],
@@ -278,7 +289,7 @@ def raise_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    emit('response',
+    emit('raise_response',
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
