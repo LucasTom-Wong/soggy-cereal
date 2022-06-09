@@ -62,6 +62,7 @@ socket.on("response", function(msg, cb){ //when recieving response
 })
 
 function start(playerTurn, playerList){
+  gameStart();
   document.getElementById("dealer"+playerTurn).removeAttribute("hidden");
   document.getElementById("bet"+(playerTurn+1)).innerHTML = "Bet: <br> $50";
   document.getElementById("bet"+(playerTurn+2)).innerHTML = "Bet: <br> $100";
