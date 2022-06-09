@@ -38,7 +38,7 @@ def logout():
 @app.route("/login",  methods=['GET', 'POST'])
 def login():
     if islogged():
-        return render_template('poker.html')
+        return redirect('/')
 
     return render_template('login.html')
 
@@ -180,6 +180,7 @@ def test_message(message):
     playerList[numPlayers] = [x['user'], getMoney(x['user'])]
     if (numPlayers == 5):
         playerList['gameState'] = "start"
+        playerList['turn'] = playerList['turn']+3
     returnMessage = {
         "playerList": playerList,
         "data-type" : "console message",
@@ -194,17 +195,23 @@ def test_message(message):
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
+    if (playerList['turn'] == 5):
+        playerList['turn'] = 1;
+    else:
+        playerList['turn'] = playerList['turn']+1
     returnMessage = {
         "data-type" : "console message",
-        "message" : "user: " + x.get("user") + "folded!"
+        "fold_user" : x['user'],
+        "next_turn" : playerList['turn'],
+        "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    emit('response',
+    emit('fold_response',
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
 @socket_.on("check_event", namespace="/test")
-def fold_message_global(message):
+def check_message_global(message):
     x = json.loads(message["data"])
     returnMessage = {
         "data-type" : "console message",
@@ -216,7 +223,7 @@ def fold_message_global(message):
          broadcast=True)
 
 @socket_.on("call_event", namespace="/test")
-def fold_message_global(message):
+def call_message_global(message):
     x = json.loads(message["data"])
     returnMessage = {
         "data-type" : "console message",
@@ -228,7 +235,7 @@ def fold_message_global(message):
          broadcast=True)
 
 @socket_.on("raise_event", namespace="/test")
-def fold_message_global(message):
+def raise_message_global(message):
     x = json.loads(message["data"])
     returnMessage = {
         "data-type" : "console message",

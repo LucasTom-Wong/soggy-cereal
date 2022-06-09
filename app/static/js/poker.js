@@ -50,14 +50,15 @@ socket.on("response", function(msg, cb){ //when recieving response
     console.log(message);
   }
 
+  for (i = 1; i <=5; i++){
+    document.getElementById("user"+i).innerHTML = parsedResponse["playerList"][i][0];
+    document.getElementById("money"+i).innerHTML = "$"+parsedResponse["playerList"][i][1];
+  }
+
   if (parsedResponse["playerList"]['gameState'] == "start"){
     startTurn = parsedResponse["playerList"]['start_turn'];
     start(startTurn, parsedResponse["playerList"]);
     updateButtons(document.getElementById("username").innerHTML, parsedResponse["playerList"][parsedResponse["playerList"]['turn']][0]);
-    for (i = 1; i <=5; i++){
-      document.getElementById("user"+i).innerHTML = parsedResponse["playerList"][i][0];
-      document.getElementById("money"+i).innerHTML = "$"+parsedResponse["playerList"][i][1];
-    }
   }
 })
 
@@ -66,7 +67,6 @@ function start(playerTurn, playerList){
   document.getElementById("dealer"+playerTurn).removeAttribute("hidden");
   document.getElementById("bet"+(playerTurn+1)).innerHTML = "Bet: <br> $50";
   document.getElementById("bet"+(playerTurn+2)).innerHTML = "Bet: <br> $100";
-  playerList['turn'] = playerList['turn']+3;
 }
 
 function sendFoldMessage(){
@@ -77,6 +77,18 @@ function sendFoldMessage(){
   socket.emit("fold_event", {data: data});
   console.log("folding server");
 }
+
+socket.on('fold_response', function(msg){
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+  console.log(parsedResponse['fold_user'] + " folded")
+  if (parsedResponse['next_turn'] == 1){
+    document.getElementById("bet5").innerHTML = "FOLDED";
+  }else{
+    document.getElementById("bet"+(parsedResponse['next_turn']-1)).innerHTML = "FOLDED";
+  }
+  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+});
 
 function sendCheckMessage(){
   let dict_data = {
