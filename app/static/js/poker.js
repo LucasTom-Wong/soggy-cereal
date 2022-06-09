@@ -59,8 +59,28 @@ socket.on("response", function(msg, cb){ //when recieving response
     startTurn = parsedResponse["playerList"]['start_turn'];
     start(startTurn, parsedResponse["playerList"]);
     updateButtons(document.getElementById("username").innerHTML, parsedResponse["playerList"][parsedResponse["playerList"]['turn']][0]);
+    if (parsedResponse['playerList'][1][0] == username){
+      document.getElementById("p1c1").src = parsedResponse['hole1'][0];
+      document.getElementById("p1c2").src = parsedResponse['hole1'][1];
+    }
+    if (parsedResponse['playerList'][2][0] == username){
+      document.getElementById("p2c1").src = parsedResponse['hole2'][0];
+      document.getElementById("p2c2").src = parsedResponse['hole2'][1];
+    }
+    if (parsedResponse['playerList'][3][0] == username){
+      document.getElementById("p3c1").src = parsedResponse['hole3'][0];
+      document.getElementById("p3c2").src = parsedResponse['hole3'][1];
+    }
+    if (parsedResponse['playerList'][4][0] == username){
+      document.getElementById("p4c1").src = parsedResponse['hole4'][0];
+      document.getElementById("p4c2").src = parsedResponse['hole4'][1];
+    }
+    if (parsedResponse['playerList'][5][0] == username){
+      document.getElementById("p5c1").src = parsedResponse['hole5'][0];
+      document.getElementById("p5c2").src = parsedResponse['hole5'][1];
+    }
   }
-})
+});
 
 function start(playerTurn, playerList){
   gameStart();
@@ -108,6 +128,18 @@ function sendCallMessage(){
   console.log("calling server");
 }
 
+socket.on('call_response', function(msg){
+  let response = msg.data;
+  let parsedResponse = JSON.parse(msg["data"]);
+
+  if (parsedResponse['next_turn'] == 1){
+    document.getElementById("bet5").innerHTML = "Bet:<br>"+parsedResponse['previous_bet'];
+  }else{
+    document.getElementById("bet"+(parsedResponse['next_turn']-1)).innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
+  }
+  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+});
+
 function sendRaiseMessage(){
   let dict_data = {
     "user" : username
@@ -120,7 +152,6 @@ function sendRaiseMessage(){
 function fold(user){
   console.log("fold");
   sendFoldMessage();
-  updateButtons(user, username);
 }
 
 buttonFold.addEventListener('click', fold);
@@ -128,7 +159,6 @@ buttonFold.addEventListener('click', fold);
 function check(){
   console.log("check");
   sendCheckMessage();
-  updateButtons(user, username);
 }
 
 buttonCheck.addEventListener('click', check);
@@ -136,7 +166,6 @@ buttonCheck.addEventListener('click', check);
 function call(){
   console.log("call");
   sendCallMessage();
-  updateButtons(user, username);
 }
 
 buttonCall.addEventListener('click', call);
@@ -144,7 +173,6 @@ buttonCall.addEventListener('click', call);
 function raise(){
   console.log("raise");
   sendRaiseMessage();
-  updateButtons(user, username);
 }
 
 buttonRaise.addEventListener('click', raise);

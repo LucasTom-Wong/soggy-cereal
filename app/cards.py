@@ -1,3 +1,4 @@
+import random
 ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 suites = ["C", "D", "H", "S"]
 allCards = []
@@ -5,6 +6,16 @@ allCards = []
 for rank in ranks:
   for suite in suites:
     allCards.append("/static/card_svgs/"+rank + suite + ".svg")
+
+random.shuffle(allCards)
+
+def createDeck():
+    deck = []
+    for rank in ranks:
+      for suite in suites:
+        deck.append("/static/card_svgs/"+rank + suite + ".svg")
+        random.shuffe(deck)
+    return deck
 
 def createCardList(player_num):
     cardList = []

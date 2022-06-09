@@ -90,8 +90,21 @@ def register():
 
     return render_template("register.html")
 
-def makeJSON(input):
-    return json.dumps(input)
+def createLobby():
+    lobbyID = urandom(32)
+    data = {
+        "id" : lobbyID,
+        'numPlayers': 0,
+        "gameState": "not started",
+        1:["P1", "1000"],
+        2:["P2", "1000"],
+        3:["P3", "1000"],
+        4:["P4", "1000"],
+        5:["P5", "1000"],
+        "start_turn":1,
+        "turn":1,
+        'deck': createDeck()
+    }
 
 #TEMPORARY (adapted for lobbies later)
 global numPlayers
@@ -105,7 +118,8 @@ playerList = {
     4:["P4", "1000"],
     5:["P5", "1000"],
     "start_turn":1,
-    "turn":1
+    "turn":1,
+    "previous_bet":100
 }
 
 global playerNum
@@ -117,7 +131,7 @@ def game():
     if "username" in session:
         username = session["username"]
         print("username is:", username)
-        return render_template('poker.html', num_players=playerNum, player_list=playerList, listCards = createCardList(numPlayers), username = username, async_mode=socket_.async_mode)
+        return render_template('poker.html', player_list=playerList, username = username, async_mode=socket_.async_mode)
     else:
         return render_template('login.html')
 
@@ -185,6 +199,11 @@ def test_message(message):
         playerList['gameState'] = "start"
         playerList['turn'] = playerList['turn']+3
     returnMessage = {
+        "hole1": [allCards[0], allCards[1]],
+        "hole2": [allCards[2], allCards[3]],
+        "hole3": [allCards[4], allCards[5]],
+        "hole4": [allCards[6], allCards[7]],
+        "hole5": [allCards[8], allCards[9]],
         "playerList": playerList,
         "data-type" : "console message",
         "message" : "connected!!! lets go! welcome user: " + x.get("user")
@@ -228,21 +247,35 @@ def check_message_global(message):
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
     x = json.loads(message["data"])
+    if (playerList['turn'] == 5):
+        playerList['turn'] = 1;
+    else:
+        playerList['turn'] = playerList['turn']+1
     returnMessage = {
         "data-type" : "console message",
-        "message" : "user: " + x.get("user") + "called!"
+        "call_user" : x['user'],
+        "previous_bet" : playerList['previous_bet'],
+        "next_turn" : playerList['turn'],
+        "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    emit('response',
+    emit('call_response',
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
 @socket_.on("raise_event", namespace="/test")
 def raise_message_global(message):
     x = json.loads(message["data"])
+    if (playerList['turn'] == 5):
+        playerList['turn'] = 1;
+    else:
+        playerList['turn'] = playerList['turn']+1
     returnMessage = {
         "data-type" : "console message",
-        "message" : "user: " + x.get("user") + "raised!"
+        "raise_user" : x['user'],
+        "previous_bet" : playerList['previous_bet'],
+        "next_turn" : playerList['turn'],
+        "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
     emit('response',
