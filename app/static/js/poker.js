@@ -132,11 +132,11 @@ socket.on('connect', function() { //when it connects to the server
   }
   let data = JSON.stringify(dict_data);
 
-  socket.emit('my_event', {data: data});
+  socket.emit('connecting', {data: data});
   console.log("Connecting/Connected!");
 });
 
-socket.on("my_response", function(msg, cb){
+socket.on("response", function(msg, cb){
   let message = msg.data;
   //JSON.parse(event.data);
   console.log(message);
