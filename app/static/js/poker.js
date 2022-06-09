@@ -203,3 +203,14 @@ function revealRiver(){
     });
 }
 });
+
+soonway = document.getElementById("gamehui");
+farway = document.getElementById("lobbyhui");
+function gameNotStart(){
+  farway.style.visibility = 'visible';
+  soonway.style.visibility = 'hidden';
+}
+function gameStart(){
+  farway.style.visibility = 'hidden';
+  soonway.style.visibility = 'visible';
+}

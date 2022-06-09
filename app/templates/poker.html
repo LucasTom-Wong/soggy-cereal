@@ -43,7 +43,13 @@
 
 {% block body %}
 <p id="username" hidden=True>{{username}}</p>
-<div class="parent-container d-flex">
+<div id="lobbyhui" style="visibility: hidden">
+	<div>
+		<p> Waiting for lobby to start! </p>
+	</div>
+</div>
+
+<div id = "gamehui" class="parent-container d-flex">
 	<div class="container" id="left">
 		<div class="row">
 				<div class="col">
