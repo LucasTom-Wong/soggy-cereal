@@ -29,20 +29,12 @@ function updatePot(amount){
   pot.innerHTML = "$" + (potAmount+amount);
 }
 
-
 $(document).ready(function() {
 
 let namespace = '/test';
 var socket = io(namespace);
 
 let timer = document.getElementById("timer");
-
-function timerUpdate(){
-  timer.innerHTML = parseInt(timer.innerHTML) - 1;
-  if (parseInt(timer.innerHTML) == 0){
-    sendFoldMessage();
-  }
-}
 
 function resetTimer(){
   timer.innerHTML = 30;
@@ -66,6 +58,10 @@ socket.on("response", function(msg, cb){ //when recieving response
   if (parsedResponse["data-type"] == "console message"){
     let message = parsedResponse["message"];
     console.log(message);
+  }
+
+  if (parsedResponse["data-type"] == "Disconnected!"){
+    console.log("Someone has disconnected");
   }
 
   for (i = 1; i <=5; i++){
@@ -111,7 +107,12 @@ socket.on("response", function(msg, cb){ //when recieving response
   }
 });
 
+socket.on('endTheGame', function() {
+  endGame();
+})
+
 function start(playerTurn, playerList){
+  console.log("Start game")
   gameStart();
   document.getElementById("dealer"+playerTurn).removeAttribute("hidden");
   if (playerTurn == 5){
@@ -134,6 +135,23 @@ function sendFoldMessage(){
   socket.emit("fold_event", {data: data});
   console.log("folding server");
 }
+
+function timerUpdate(){
+  timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  if (parseInt(timer.innerHTML) == 0){
+    console.log("Timer out");
+    sendFoldMessage();
+  }
+}
+
+window.onbeforeunload = function() { //sends fold when disconnect?
+    sendFoldMessage();
+    return null;
+}
+
+// function newLobby(){
+//   socket.emit("newlobby");
+// }
 
 socket.on('fold_response', function(msg){
   resetTimer();
@@ -269,6 +287,7 @@ function checkGameState(gameState){
     buttonCheck.disabled = true;
     buttonCall.disabled = true;
     buttonRaise.disabled = true;
+    // endGame();
   }
 }
 
@@ -342,6 +361,7 @@ function gameStart(){
 }
 
 function endGame(winner, amountWon){
+  console.log("game ended");
   document.getElementById("winner").innerHTML = winner;
   document.getElementById("finPot").innerHTML = amountWon;
   document.getElementById("results").hidden = false;

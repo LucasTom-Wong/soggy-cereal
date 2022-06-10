@@ -207,32 +207,37 @@ def getBet():
     else:
         return redirect("/")
 
+# @socket_.on("newlobby", namespace="/test")
+# def createNewLobby():
+#     createLobby()
+
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    x = json.loads(message["data"])
     global numPlayers
-    numPlayers = numPlayers + 1
-    global playerList
-    playerList[numPlayers] = [x['user'], getMoney(x['user'])]
-    if (numPlayers == 5):
-        playerList['gameState'] = 0
-        playerList['turn'] = playerList['turn']+3
-    returnMessage = {
-        "hole1": [allCards[0], allCards[1]],
-        "hole2": [allCards[2], allCards[3]],
-        "hole3": [allCards[4], allCards[5]],
-        "hole4": [allCards[6], allCards[7]],
-        "hole5": [allCards[8], allCards[9]],
-        "playerList": playerList,
-        "data-type" : "console message",
-        "message" : "connected!!! lets go! welcome user: " + x.get("user")
-    }
-    y = json.dumps(returnMessage)
-    print(playerList)
-    print(numPlayers)
-    emit('response',
-         {'data': y, 'count': session['receive_count']}, broadcast=True)
+    if (numPlayers < 5):
+        session['receive_count'] = session.get('receive_count', 0) + 1
+        x = json.loads(message["data"])
+        numPlayers = numPlayers + 1
+        global playerList
+        playerList[numPlayers] = [x['user'], getMoney(x['user'])]
+        if (numPlayers == 5):
+            playerList['gameState'] = 0
+            playerList['turn'] = playerList['turn']+3
+        returnMessage = {
+            "hole1": [allCards[0], allCards[1]],
+            "hole2": [allCards[2], allCards[3]],
+            "hole3": [allCards[4], allCards[5]],
+            "hole4": [allCards[6], allCards[7]],
+            "hole5": [allCards[8], allCards[9]],
+            "playerList": playerList,
+            "data-type" : "console message",
+            "message" : "connected!!! lets go! welcome user: " + x.get("user")
+        }
+        y = json.dumps(returnMessage)
+        print(playerList)
+        print(numPlayers)
+        emit('response',
+             {'data': y, 'count': session['receive_count']}, broadcast=True)
 
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
@@ -263,9 +268,14 @@ def fold_message_global(message):
             "next_user" : playerList[playerList['turn']][0]
         }
         y = json.dumps(returnMessage)
-        emit('fold_response',
-             {'data': y, 'count': session['receive_count']},
-             broadcast=True)
+
+        if (len(playerList['folded']) >= 4):
+            print("ending game")
+            endTheGame()
+        else :
+            emit('fold_response',
+                {'data': y, 'count': session['receive_count']},
+                broadcast=True)
 
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
@@ -356,16 +366,9 @@ def raise_message_global(message):
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
-# @socket_.on('disconnect_request', namespace='/test')
-# def disconnect_request():
-#     @copy_current_request_context
-#     def can_disconnect():
-#         disconnect()
-#
-#     session['receive_count'] = session.get('receive_count', 0) + 1
-#     emit('my_response',
-#          {'data': 'Disconnected!', 'count': session['receive_count']},
-#          callback=can_disconnect)
+def endTheGame():
+    emit("endTheGame", broadcast=True)
+
 
 if __name__ == "__main__":
     app.debug = True
