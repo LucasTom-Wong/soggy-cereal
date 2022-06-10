@@ -366,6 +366,12 @@ def raise_message_global(message):
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
+@socket_.on("update_money", namespace="/test")
+def updateMoney(message):
+    print("updating money")
+    x = json.loads(message["data"])
+    updateUserMoney(x['user'], x['new_money'])
+
 @socket_.on("reset", namespace="/test")
 def resetter():
     print("reseeting")

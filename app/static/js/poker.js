@@ -104,6 +104,23 @@ socket.on("response", function(msg, cb){ //when recieving response
       document.getElementById("p5c1").src = parsedResponse['hole5'][0];
       document.getElementById("p5c2").src = parsedResponse['hole5'][1];
     }
+
+    let playerList = parsedResponse["playerList"];
+
+    if (buttonFold.disabled == false){
+      let dict_data = {
+        "user": playerList[playerList['dealer']+1][0],
+        "new_money": -50
+      }
+      let data = JSON.stringify(dict_data);
+      socket.emit('update_money', {'data': data});
+      let dict_data2 = {
+        "user": playerList[playerList['dealer']+2][0],
+        "new_money": -100
+      }
+      let data2 = JSON.stringify(dict_data2);
+      socket.emit('update_money', {'data': data2});
+    }
   }
 });
 
@@ -215,6 +232,14 @@ socket.on('call_response', function(msg){
   updatePot(betDifference);
   document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
+  if (buttonFold.disabled == false){
+    let dict_data = {
+      "user": username,
+      "new_money": 0-betDifference
+    }
+    let data = JSON.stringify(dict_data);
+    socket.emit('update_money', {'data': data});
+  }
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
@@ -237,6 +262,14 @@ socket.on('raise_response', function(msg){
   updatePot(betDifference);
   document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
+  if (buttonFold.disabled == false){
+    let dict_data = {
+      "user": username,
+      "new_money": 0-betDifference
+    }
+    let data = JSON.stringify(dict_data);
+    socket.emit('update_money', {'data': data});
+  }
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
