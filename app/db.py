@@ -85,3 +85,14 @@ def getMoney(username):
     return c.fetchall()[0][0]
     db.commit()
     db.close()
+
+def addMoney(username):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("SELECT money FROM users WHERE username = (?)", (username,))
+    money = c.fetchall()[0][0]
+    if (money < 0):
+        c.execute("UPDATE users SET money = 10000 WHERE username = (?)", (username,))
+        c.execute("UPDATE users SET timesBroke = timesBroke + 1 WHERE username = (?)", (username,))
+    db.commit()
+    db.close()

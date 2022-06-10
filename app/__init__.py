@@ -438,6 +438,12 @@ def endTheGame(winner, money):
     global numPlayers
     numPlayers = 0
     global playerList
+
+    i = 1
+    while i < 6:
+        addMoney(playerList[i][0])
+        i = i+1
+
     playerList = {
         "gameState": -1,
         1:["P1", "1000"],
