@@ -805,7 +805,7 @@ def findWinner(playerList):
                     tempWinnerList.append[player]
                 break
 
-            
+    return tempWinnerList
     
 # Rank and Suit Grabber
 def RSG(string):
