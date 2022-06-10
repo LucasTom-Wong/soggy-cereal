@@ -197,28 +197,28 @@ socket.on('fold_response', function(msg){
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
-function sendCheckMessage(){
-  $.get("/previous_bet", function(bet) {
-    let previous_bet = JSON.parse(bet);
-    let check = previous_bet['bet'];
-    let dict_data = {
-      "user" : username
-    }
-    let data = JSON.stringify(dict_data);
-    if (check){
-      socket.emit("check_event", {data: data});
-      console.log("checking server");
-    }
-  });
-}
-
-socket.on('check_response', function(msg){
-  resetTimer();
-  let response = msg.data;
-  let parsedResponse = JSON.parse(msg["data"]);
-  checkGameState(parsedResponse['gameState']);
-  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
-});
+// function sendCheckMessage(){
+//   $.get("/previous_bet", function(bet) {
+//     let previous_bet = JSON.parse(bet);
+//     let check = previous_bet['bet'];
+//     let dict_data = {
+//       "user" : username
+//     }
+//     let data = JSON.stringify(dict_data);
+//     if (check){
+//       socket.emit("check_event", {data: data});
+//       console.log("checking server");
+//     }
+//   });
+// }
+//
+// socket.on('check_response', function(msg){
+//   resetTimer();
+//   let response = msg.data;
+//   let parsedResponse = JSON.parse(msg["data"]);
+//   checkGameState(parsedResponse['gameState']);
+//   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+// });
 
 function sendCallMessage(){
   let dict_data = {
