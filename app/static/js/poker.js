@@ -3,6 +3,7 @@ let buttonCheck = document.getElementById("checkButton");
 let buttonCall = document.getElementById("callButton");
 let buttonRaise = document.getElementById("raiseButton");
 let room_code = document.getElementById("room_code").innerHTML;
+console.log(room_code);
 
 function updateButtons(user, currentUser){
   if (user == currentUser){
@@ -43,6 +44,14 @@ function resetTimer(){
 
 socket.on('connect', function() { //when it connects to the server
   console.log("Attempting to connect!");
+
+  let sup_data = {
+    "username" : username,
+    room : room_code
+  }
+  let supper = JSON.stringify(sup_data);
+  socket.emit("join", {data: supper});
+
   let dict_data  = {
     "user" : username,
     "room" : room_code
@@ -51,13 +60,6 @@ socket.on('connect', function() { //when it connects to the server
 
   socket.emit('connecting', {data: data});
   console.log("Connecting/Connected!");
-
-  let sup_data = {
-    "username" : username,
-    room : room_code
-  }
-  let supper = JSON.stringify(sup_data);
-  socket.emit("join", {data: supper});
   // checkConnected();
 });
 
