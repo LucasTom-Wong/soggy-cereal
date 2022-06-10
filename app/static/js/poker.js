@@ -49,6 +49,7 @@ socket.on('connect', function() { //when it connects to the server
 
   socket.emit('connecting', {data: data});
   console.log("Connecting/Connected!");
+  checkConnected();
 });
 
 socket.on("response", function(msg, cb){ //when recieving response
@@ -158,22 +159,31 @@ function sendFoldMessage(){
 
 function timerUpdate(){
   timer.innerHTML = parseInt(timer.innerHTML) - 1;
-  if (parseInt(timer.innerHTML) == 0){
-    if (buttonFold.disabled == false){
+  if (buttonFold.disabled == false){
+    if (parseInt(timer.innerHTML) == 0){
       console.log("Timer out");
       sendFoldMessage();
     }
   }
 }
 
-// window.onbeforeunload = function() { //sends fold when disconnect?
-//     sendFoldMessage();
-//     return null;
-// }
+socket.on("checking", function() {
+  setTimeout(
+    function(){
+      checkConnected();
+      console.log("woo");
+    },
+    1000
+  );
+})
 
-window.addEventListener("beforeunload", function() {
-   return "Are you sure you want to leave?";
-});
+function checkConnected(){
+    let dict_data = {
+      "user" : username
+    }
+    let data = JSON.stringify(dict_data);
+    socket.emit("talking", {data: data});
+}
 
 
 socket.on('fold_response', function(msg){
@@ -187,28 +197,28 @@ socket.on('fold_response', function(msg){
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
-function sendCheckMessage(){
-  $.get("/previous_bet", function(bet) {
-    let previous_bet = JSON.parse(bet);
-    let check = previous_bet['bet'];
-    let dict_data = {
-      "user" : username
-    }
-    let data = JSON.stringify(dict_data);
-    if (check){
-      socket.emit("check_event", {data: data});
-      console.log("checking server");
-    }
-  });
-}
-
-socket.on('check_response', function(msg){
-  resetTimer();
-  let response = msg.data;
-  let parsedResponse = JSON.parse(msg["data"]);
-  checkGameState(parsedResponse['gameState']);
-  updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
-});
+// function sendCheckMessage(){
+//   $.get("/previous_bet", function(bet) {
+//     let previous_bet = JSON.parse(bet);
+//     let check = previous_bet['bet'];
+//     let dict_data = {
+//       "user" : username
+//     }
+//     let data = JSON.stringify(dict_data);
+//     if (check){
+//       socket.emit("check_event", {data: data});
+//       console.log("checking server");
+//     }
+//   });
+// }
+//
+// socket.on('check_response', function(msg){
+//   resetTimer();
+//   let response = msg.data;
+//   let parsedResponse = JSON.parse(msg["data"]);
+//   checkGameState(parsedResponse['gameState']);
+//   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
+// });
 
 function sendCallMessage(){
   let dict_data = {
