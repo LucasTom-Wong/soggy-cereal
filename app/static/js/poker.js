@@ -3,6 +3,7 @@ let buttonCheck = document.getElementById("checkButton");
 let buttonCall = document.getElementById("callButton");
 let buttonRaise = document.getElementById("raiseButton");
 let room_code = document.getElementById("room_code").innerHTML;
+let buttonKick = document.getElementById("kickButton");
 
 function updateButtons(user, currentUser){
   if (user == currentUser){
@@ -80,6 +81,7 @@ socket.on("response", function(msg, cb){ //when recieving response
   }
 
   if (parsedResponse["playerList"]['gameState'] == 0){
+    buttonKick.disabled=false;
     resetTimer();
     setInterval(timerUpdate, 1000);
     updatePot(150);
@@ -174,7 +176,9 @@ function sendFoldMessage(){
 }
 
 function timerUpdate(){
-  timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  if (timer.innerHTML != "-1"){
+    timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  }
   if (buttonFold.disabled == false){
     if (parseInt(timer.innerHTML) == 0){
       console.log("Timer out");
@@ -212,6 +216,17 @@ socket.on('fold_response', function(msg){
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "FOLDED";
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
+
+function sendKickMessage(){
+  if (timer.innerHTML == "-1"){
+    let dict_data = {
+      "pot" : pot.innerHTML
+    }
+    let data = JSON.stringify(dict_data);
+    socket.emit("kick_event", {data: data});
+    console.log("kicking server");
+  }
+}
 
 function sendCheckMessage(){
   $.get("/previous_bet", function(bet) {
@@ -308,6 +323,13 @@ function fold(user){
 }
 
 buttonFold.addEventListener('click', fold);
+
+function kick(){
+  console.log("kick");
+  sendKickMessage();
+}
+
+buttonKick.addEventListener('click', kick);
 
 function check(){
   console.log("check");

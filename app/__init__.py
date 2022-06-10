@@ -294,6 +294,49 @@ def fold_message_global(message):
                 {'data': y, 'count': session['receive_count']},
                 broadcast=True, to=room)
 
+@socket_.on("kick_event", namespace="/test")
+def kick_message_global(message):
+    x = json.loads(message["data"])
+    global currentPot
+    currentPot = x.get('pot')
+
+    current = playerList['turn']
+    playerList['folded'].append(playerList['turn'])
+    if (playerList['turn'] == 5):
+        playerList['turn'] = 1;
+    else:
+        playerList['turn'] = playerList['turn']+1
+
+    while playerList['turn'] in playerList['folded']:
+        if (playerList['turn'] == 5):
+            playerList['turn'] = 1;
+        else:
+            playerList['turn'] = playerList['turn']+1
+    if (playerList['turn'] == playerList['start_turn']):
+        playerList['gameState'] = playerList['gameState'] +1
+        playerList['check'] = True
+    returnMessage = {
+        "data-type" : "console message",
+        "gameState" : playerList['gameState'],
+        "fold_user" : playerList[current][0],
+        "current_turn" : current,
+        "next_turn" : playerList['turn'],
+        "next_user" : playerList[playerList['turn']][0]
+    }
+    y = json.dumps(returnMessage)
+
+    if (len(playerList['folded']) >= 4):
+        print("ending game")
+        winner = determineWinner()
+        money = determineMoney()
+        room = x.get("room")
+        endTheGame(winner, money, room)
+    else :
+        room = x.get("room")
+        emit('fold_response',
+            {'data': y, 'count': session['receive_count']},
+            broadcast=True, to=room)
+
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
     x = json.loads(message["data"])
