@@ -54,6 +54,12 @@ socket.on("response", function(msg, cb){ //when recieving response
 
   if (parsedResponse["playerList"]['gameState'] == 0){
     dealerTurn = parsedResponse["playerList"]['dealer'];
+    let money2 = (document.getElementById("money"+(dealerTurn+1)).innerHTML).slice(1);
+    money2 = parseInt(money2);
+    let money3 = (document.getElementById("money"+(dealerTurn+2)).innerHTML).slice(1);
+    money3 = parseInt(money3);
+    document.getElementById("money"+(dealerTurn+1)).innerHTML = "$"+(money2-50);
+    document.getElementById("money"+(dealerTurn+2)).innerHTML = "$"+(money3-100);
     start(dealerTurn, parsedResponse["playerList"]);
     startTurn = parsedResponse['playerList']['turn'];
     console.log(startTurn);
@@ -85,14 +91,14 @@ function start(playerTurn, playerList){
   gameStart();
   document.getElementById("dealer"+playerTurn).removeAttribute("hidden");
   if (playerTurn == 5){
-    document.getElementById("bet1").innerHTML = "Bet: <br> $50";
-    document.getElementById("bet2").innerHTML = "Bet: <br> $100";
+    document.getElementById("bet1").innerHTML = "$50";
+    document.getElementById("bet2").innerHTML = "$100";
   }else if (playerTurn == 4){
-    document.getElementById("bet5").innerHTML = "Bet: <br> $50";
-    document.getElementById("bet1").innerHTML = "Bet: <br> $100";
+    document.getElementById("bet5").innerHTML = "$50";
+    document.getElementById("bet1").innerHTML = "$100";
   }else{
-    document.getElementById("bet"+(playerTurn+1)).innerHTML = "Bet: <br> $50";
-    document.getElementById("bet"+(playerTurn+2)).innerHTML = "Bet: <br> $100";
+    document.getElementById("bet"+(playerTurn+1)).innerHTML = "$50";
+    document.getElementById("bet"+(playerTurn+2)).innerHTML = "$100";
   }
 }
 
@@ -150,7 +156,11 @@ socket.on('call_response', function(msg){
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
   checkGameState(parsedResponse['gameState']);
-  document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
+  let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));
+  let currentMoney = parseInt((document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML).slice(1));
+  let betDifference = parseInt(parsedResponse['previous_bet'])-currentBet;
+  document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
+  document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
@@ -166,7 +176,11 @@ function sendRaiseMessage(){
 socket.on('raise_response', function(msg){
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
-  document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "Bet:<br>$"+parsedResponse['previous_bet'];
+  let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));
+  let currentMoney = parseInt((document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML).slice(1));
+  let betDifference = parseInt(parsedResponse['previous_bet'])-currentBet;
+  document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
+  document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
@@ -218,6 +232,9 @@ function checkGameState(gameState){
   }
   if (gameState == 3){
     revealRiver();
+  }
+  if (gameState == 4){
+    revealCards();
   }
 }
 

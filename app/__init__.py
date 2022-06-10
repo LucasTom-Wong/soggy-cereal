@@ -126,7 +126,7 @@ playerList = {
 }
 
 global playerNum
-playerNum=5;
+playerNum=5
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
