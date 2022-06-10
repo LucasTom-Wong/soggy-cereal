@@ -15,8 +15,14 @@ def createTables():
         timesBroke INTEGER NOT NULL)
     """
     c.execute(command)
-    db.commit();
-    db.close();
+    command = """CREATE TABLE IF NOT EXISTS games(
+        gamecode INTEGER NOT NULL,
+        gamestage TEXT NOT NULL,
+        gamecards TEXT NOT NULL)
+    """
+    c.execute()
+    db.commit()
+    db.close()
 
 createTables();
 
@@ -82,9 +88,9 @@ def getMoney(username):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("SELECT money FROM users WHERE username = (?)", (username,))
-    return c.fetchall()[0][0]
-    db.commit()
+    money = c.fetchall()[0][0]
     db.close()
+    return money
 
 def addMoney(username):
     db = sqlite3.connect(DB_FILE)
@@ -94,5 +100,33 @@ def addMoney(username):
     if (money < 0):
         c.execute("UPDATE users SET money = 10000 WHERE username = (?)", (username,))
         c.execute("UPDATE users SET timesBroke = timesBroke + 1 WHERE username = (?)", (username,))
+    db.commit()
+    db.close()
+
+def getRandomNumber(lower, upper, takens):
+    randomNumber = random.randint(lower, upper)
+    sortedTakens = takens.copy()
+    sortedTakens.sort()
+    for taken in sortedTakens:
+        if randomNumber < taken:
+            return getRandomNumber
+        randomNumber += 1
+
+def first(lst):
+    return lst[0]
+
+def getGamecodes():
+    b = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("SELECT gamecode FROM games")
+    gamecodes = list(map(first, c.fetchall()))
+    db.close()
+    return gamecodes
+
+def addGame():
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    gamecode = getRandomNumber(1000, 9999, getGamecodes())
+    c.execute("INSERT INTO games VALUES (?, 0, '')")
     db.commit()
     db.close()
