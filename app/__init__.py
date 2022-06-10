@@ -406,10 +406,21 @@ def resetter():
 def determineWinner():
     global setOfPlayers
     global playerList
+    foldedList = []
+    i = 0
+    while i < len(playerList['folded']):
+        foldedList.append(playerList[playerList['folded'][i]][0])
+        i = i+1
+    print(foldedList)
     for player in setOfPlayers:
-        if (player not in playerList["folded"]):
+        if (player in foldedList):
+            updateUserLoss(player)
+    for player in setOfPlayers:
+        if (player not in foldedList):
+            updateUserWin(player)
             return player
     return "Bob"
+
 def determineMoney():
     global currentPot
     return currentPot;
