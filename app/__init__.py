@@ -8,6 +8,7 @@ import urllib
 import random
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room
 from threading import Lock
+from lobby import *
 
 async_mode = None
 app = Flask(__name__)
@@ -97,7 +98,9 @@ def joinLobby():
     else:
         return redirect('/login')
 
-def createLobby():
+listLobbies;
+
+def createLobby(room_code):
     global currentPot
     currentPot = 0
     lobbyID = urandom(32)
@@ -454,6 +457,7 @@ def resetter():
         "turn":1,
         "previous_bet":100,
         "check":False
+    setOfPlayers = set()
     }
 
 # @socket_.on("talking", namespace="/test")
