@@ -140,12 +140,12 @@ function sendFoldMessage(){
 }
 
 function timerUpdate(){
-  if (buttonFold.disabled == false){
-    timer.innerHTML = parseInt(timer.innerHTML) - 1;
-  }
+  timer.innerHTML = parseInt(timer.innerHTML) - 1;
   if (parseInt(timer.innerHTML) == 0){
-    console.log("Timer out");
-    sendFoldMessage();
+    if (buttonFold.disabled == false){
+      console.log("Timer out");
+      sendFoldMessage();
+    }
   }
 }
 
