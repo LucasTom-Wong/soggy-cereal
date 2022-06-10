@@ -139,17 +139,23 @@ function sendFoldMessage(){
 }
 
 function timerUpdate(){
-  timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  if (buttonFold.disabled == false){
+    timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  }
   if (parseInt(timer.innerHTML) == 0){
     console.log("Timer out");
     sendFoldMessage();
   }
 }
 
-window.onbeforeunload = function() { //sends fold when disconnect?
-    sendFoldMessage();
-    return null;
-}
+// window.onbeforeunload = function() { //sends fold when disconnect?
+//     sendFoldMessage();
+//     return null;
+// }
+
+window.addEventListener("beforeunload", function() {
+   return "Are you sure you want to leave?";
+});
 
 // function newLobby(){
 //   socket.emit("newlobby");

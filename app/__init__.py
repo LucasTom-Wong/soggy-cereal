@@ -366,6 +366,27 @@ def raise_message_global(message):
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
+@socket_.on("reset", namespace="/test")
+def resetter():
+    print("reseeting")
+    global numPlayers
+    numPlayers = 0
+    global playerList
+    playerList = {
+        "gameState": -1,
+        1:["P1", "1000"],
+        2:["P2", "1000"],
+        3:["P3", "1000"],
+        4:["P4", "1000"],
+        5:["P5", "1000"],
+        "folded": [],
+        "dealer":1,
+        "start_turn":3,
+        "turn":1,
+        "previous_bet":100,
+        "check":False
+    }
+
 def endTheGame():
     returnMessage = {
         "data-type" : "message",
@@ -373,7 +394,7 @@ def endTheGame():
         "amountWon" : 10
     }
     y = json.dumps(returnMessage)
-    
+
     global numPlayers
     numPlayers = 0
     global playerList
