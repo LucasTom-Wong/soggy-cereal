@@ -1,7 +1,7 @@
 import sqlite3
 import random
 
-DB_FILE="tmp/users.db"
+DB_FILE="users.db"
 
 def createTables():
     db = sqlite3.connect(DB_FILE)
