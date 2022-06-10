@@ -107,8 +107,10 @@ socket.on("response", function(msg, cb){ //when recieving response
   }
 });
 
-socket.on('endTheGame', function() {
-  endGame();
+socket.on('endTheGame', function(msg) {
+  // let response = msg.data;
+  let parsed_response = JSON.parse(msg["data"]);
+  endGame(parsed_response["winner"], parsed_response["amountWon"]);
 })
 
 function start(playerTurn, playerList){
