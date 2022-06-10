@@ -14,3 +14,24 @@ Poker Central is hub where people with the love for playing poker can play with 
 
 lets call it a day with the names
 our thing is poker i guess, lets call it a day
+
+## Launch Codes
+* Clone this repo:  
+` $ git clone git@github.com:LucasTom-Wong/P01.git `
+
+* Create a virtual environment, then activate it:  
+`$ python3 -m venv venv`  <br>
+or <br>
+`$ python -m venv venv` <br>
+then <br>
+`$ source venv/bin/activate`
+
+* Download requirements.txt <br>
+`$ pip install -r requirements.txt ` <br>
+or <br>
+`$ pip3 install -r requirements.txt `
+
+* Run the app  
+`$ python3 app/__init__.py` <br>
+or <br>
+`$ python app/__init__.py`
