@@ -64,13 +64,17 @@ def updateUserMoney(username, amount):
     db.commit()
     db.close()
 
-def updateUserWinLoss(username, boo):
+def updateUserWin(username):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    if (boo):
-        c.execute("UPDATE users SET wins = wins + 1 WHERE username = (?)", (username,))
-    else:
-        c.execute("UPDATE users SET losses = losses + 1 WHERE username = (?)", (username,))
+    c.execute("UPDATE users SET wins = wins + 1 WHERE username = (?)", (username,))
+    db.commit()
+    db.close()
+
+def updateUserLoss(username):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("UPDATE users SET losses = losses + 1 WHERE username = (?)", (username,))
     db.commit()
     db.close()
 

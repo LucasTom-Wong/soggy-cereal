@@ -376,6 +376,12 @@ def raise_message_global(message):
          {'data': y, 'count': session['receive_count']},
          broadcast=True)
 
+@socket_.on("update_money", namespace="/test")
+def updateMoney(message):
+    print("updating money")
+    x = json.loads(message["data"])
+    updateUserMoney(x['user'], x['new_money'])
+
 @socket_.on("reset", namespace="/test")
 def resetter():
     print("reseeting")
@@ -408,10 +414,21 @@ def test_disconnect():
 def determineWinner():
     global setOfPlayers
     global playerList
+    foldedList = []
+    i = 0
+    while i < len(playerList['folded']):
+        foldedList.append(playerList[playerList['folded'][i]][0])
+        i = i+1
+    print(foldedList)
     for player in setOfPlayers:
-        if (player not in playerList["folded"]):
+        if (player in foldedList):
+            updateUserLoss(player)
+    for player in setOfPlayers:
+        if (player not in foldedList):
+            updateUserWin(player)
             return player
     return "Bob"
+
 def determineMoney():
     global currentPot
     return currentPot;
@@ -423,6 +440,8 @@ def endTheGame(winner, money):
         "amountWon" : money
     }
     y = json.dumps(returnMessage)
+
+    updateUserMoney(winner, int(money[1:]))
 
     global numPlayers
     numPlayers = 0
