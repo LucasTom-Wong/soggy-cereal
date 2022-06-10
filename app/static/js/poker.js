@@ -1,7 +1,7 @@
-buttonFold = document.getElementById("foldButton");
-buttonCheck = document.getElementById("checkButton");
-buttonCall = document.getElementById("callButton");
-buttonRaise = document.getElementById("raiseButton");
+let buttonFold = document.getElementById("foldButton");
+let buttonCheck = document.getElementById("checkButton");
+let buttonCall = document.getElementById("callButton");
+let buttonRaise = document.getElementById("raiseButton");
 
 function updateButtons(user, currentUser){
   if (user == currentUser){
@@ -29,13 +29,24 @@ function updatePot(amount){
   pot.innerHTML = "$" + (potAmount+amount);
 }
 
-timer = document.getElementById("timer");
-
 
 $(document).ready(function() {
 
 let namespace = '/test';
 var socket = io(namespace);
+
+let timer = document.getElementById("timer");
+
+function timerUpdate(){
+  timer.innerHTML = parseInt(timer.innerHTML) - 1;
+  if (parseInt(timer.innerHTML) == 0){
+    sendFoldMessage();
+  }
+}
+
+function resetTimer(){
+  timer.innerHTML = 30;
+}
 
 socket.on('connect', function() { //when it connects to the server
   console.log("Attempting to connect!");
@@ -63,6 +74,8 @@ socket.on("response", function(msg, cb){ //when recieving response
   }
 
   if (parsedResponse["playerList"]['gameState'] == 0){
+    resetTimer();
+    setInterval(timerUpdate, 1000);
     updatePot(150);
     dealerTurn = parsedResponse["playerList"]['dealer'];
     let money2 = (document.getElementById("money"+(dealerTurn+1)).innerHTML).slice(1);
@@ -123,6 +136,7 @@ function sendFoldMessage(){
 }
 
 socket.on('fold_response', function(msg){
+  resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
 
@@ -148,6 +162,7 @@ function sendCheckMessage(){
 }
 
 socket.on('check_response', function(msg){
+  resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
   checkGameState(parsedResponse['gameState']);
@@ -164,6 +179,7 @@ function sendCallMessage(){
 }
 
 socket.on('call_response', function(msg){
+  resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
   checkGameState(parsedResponse['gameState']);
@@ -186,6 +202,7 @@ function sendRaiseMessage(){
 }
 
 socket.on('raise_response', function(msg){
+  resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
   let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));

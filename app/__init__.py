@@ -136,7 +136,7 @@ def game():
         print("username is:", username)
         return render_template('poker.html', player_list=playerList, username = username, async_mode=socket_.async_mode)
     else:
-        return render_template('login.html')
+        return redirect('/login')
 
 @app.route("/reveal_cards", methods=['GET'])
 def reveal_cards():
@@ -230,34 +230,35 @@ def test_message(message):
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
-    current = playerList['turn']
-    playerList['folded'].append(playerList['turn'])
-    print(playerList['folded'])
-    if (playerList['turn'] == 5):
-        playerList['turn'] = 1;
-    else:
-        playerList['turn'] = playerList['turn']+1
-
-    while playerList['turn'] in playerList['folded']:
+    if (x['user'] == playerList[playerList['turn']][0]):
+        current = playerList['turn']
+        playerList['folded'].append(playerList['turn'])
+        print(playerList['folded'])
         if (playerList['turn'] == 5):
             playerList['turn'] = 1;
         else:
             playerList['turn'] = playerList['turn']+1
-    if (playerList['turn'] == playerList['start_turn']):
-        playerList['gameState'] = playerList['gameState'] +1
-        playerList['check'] = True
-    returnMessage = {
-        "data-type" : "console message",
-        "gameState" : playerList['gameState'],
-        "fold_user" : x['user'],
-        "current_turn" : current,
-        "next_turn" : playerList['turn'],
-        "next_user" : playerList[playerList['turn']][0]
-    }
-    y = json.dumps(returnMessage)
-    emit('fold_response',
-         {'data': y, 'count': session['receive_count']},
-         broadcast=True)
+
+        while playerList['turn'] in playerList['folded']:
+            if (playerList['turn'] == 5):
+                playerList['turn'] = 1;
+            else:
+                playerList['turn'] = playerList['turn']+1
+        if (playerList['turn'] == playerList['start_turn']):
+            playerList['gameState'] = playerList['gameState'] +1
+            playerList['check'] = True
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "fold_user" : x['user'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0]
+        }
+        y = json.dumps(returnMessage)
+        emit('fold_response',
+             {'data': y, 'count': session['receive_count']},
+             broadcast=True)
 
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
