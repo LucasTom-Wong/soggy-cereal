@@ -6,7 +6,7 @@ import sqlite3, os.path
 import json
 import urllib
 import random
-from flask_socketio import SocketIO, emit, disconnect
+from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room
 from threading import Lock
 
 async_mode = None
@@ -148,8 +148,12 @@ def game():
     username = "bob"
     if "username" in session:
         username = session["username"]
-        print("username is:", username)
-        return render_template('poker.html', player_list=playerList, username = username, async_mode=socket_.async_mode)
+        # print("username is:", username)
+        room_code = ""
+        if (request.method == 'POST'):
+            room_code = request.form.get("lobbyCode")
+            # print("room code is: " + room_code)
+        return render_template('poker.html', player_list=playerList, username = username, room_code = room_code, async_mode=socket_.async_mode)
     else:
         return redirect('/login')
 
@@ -239,11 +243,12 @@ def test_message(message):
             "data-type" : "console message",
             "message" : "connected!!! lets go! welcome user: " + x.get("user")
         }
+        room = x.get("room")
         y = json.dumps(returnMessage)
         print(playerList)
         print(numPlayers)
         emit('response',
-             {'data': y, 'count': session['receive_count']}, broadcast=True)
+             {'data': y, 'count': session['receive_count']}, broadcast=True, to=room)
 
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
@@ -281,11 +286,13 @@ def fold_message_global(message):
             print("ending game")
             winner = determineWinner()
             money = determineMoney()
-            endTheGame(winner, money)
+            room = x.get("room")
+            endTheGame(winner, money, room)
         else :
+            room = x.get("room")
             emit('fold_response',
                 {'data': y, 'count': session['receive_count']},
-                broadcast=True)
+                broadcast=True, to=room)
 
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
@@ -312,9 +319,10 @@ def check_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
+    room = x.get("room")
     emit('check_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True)
+         broadcast=True, to=room)
 
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
@@ -342,9 +350,10 @@ def call_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
+    room = x.get("room")
     emit('call_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True)
+         broadcast=True, to=room)
 
 @socket_.on("raise_event", namespace="/test")
 def raise_message_global(message):
@@ -372,9 +381,10 @@ def raise_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
+    room = x.get("room")
     emit('raise_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True)
+         broadcast=True, to=room)
 
 @socket_.on("update_money", namespace="/test")
 def updateMoney(message):
@@ -411,6 +421,20 @@ def resetter():
 # def test_disconnect():
 #     print('Client disconnected')
 
+@socket_.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    send(username + ' has entered the room.', to=room)
+
+@socket_.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    send(username + ' has left the room.', to=room)
+
 def determineWinner():
     global setOfPlayers
     global playerList
@@ -433,7 +457,7 @@ def determineMoney():
     global currentPot
     return currentPot;
 
-def endTheGame(winner, money):
+def endTheGame(winner, money, room):
     returnMessage = {
         "data-type" : "message",
         "winner" : winner,
@@ -470,8 +494,7 @@ def endTheGame(winner, money):
     currentPot = 0
     global setOfPlayers
     setOfPlayers = set()
-
-    emit("endTheGame", {'data': y} ,broadcast=True)
+    emit("endTheGame", {'data': y} ,broadcast=True, to=room)
 
 
 if __name__ == "__main__":
