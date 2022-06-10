@@ -422,6 +422,8 @@ def endTheGame(winner, money):
     }
     y = json.dumps(returnMessage)
 
+    updateUserMoney(winner, int(money[1:]))
+
     global numPlayers
     numPlayers = 0
     global playerList
