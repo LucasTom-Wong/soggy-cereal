@@ -148,7 +148,8 @@ function start(playerTurn, playerList){
 
 function sendFoldMessage(){
   let dict_data = {
-    "user" : username
+    "user" : username,
+    "pot" : pot.innerHTML
   }
   let data = JSON.stringify(dict_data);
   socket.emit("fold_event", {data: data});
@@ -174,9 +175,6 @@ window.addEventListener("beforeunload", function() {
    return "Are you sure you want to leave?";
 });
 
-// function newLobby(){
-//   socket.emit("newlobby");
-// }
 
 socket.on('fold_response', function(msg){
   resetTimer();
