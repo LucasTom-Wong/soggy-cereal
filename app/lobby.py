@@ -19,4 +19,30 @@ class Lobby:
         self.setOfPlayers = set()
         self.currentPot = 0
         self.playerNum=5
-        self.currentPot = 0
+
+    def returnNumPlayers(self):
+        return self.numPlayers
+
+    def updateNumPlayers(self, new):
+        self.numPlayers = new
+        return null
+
+    def returnPlayerList(self):
+        return self.playerList
+
+    def returnSetOfPlayers(self):
+        return self.setOfPlayers
+
+    def returnCurrentPot(self):
+        return self.currentPot
+
+    def updateCurrentPot(self, new):
+        self.currentPot = new
+        return null
+
+    def returnPlayerNum(self):
+        return self.playerNum
+
+    def updatePlayerNum(self, new):
+        self.playerNum = new
+        return null
