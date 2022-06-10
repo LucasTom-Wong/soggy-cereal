@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %} Home {% endblock %}
+
+{% block css %}
+<style>
+  .mb-3{
+    width:500px;
+  }
+  .container{
+    text-align:center
+  }
+  a:hover, a:active {
+    color: #56d23f;
+  }
+  a{
+    text-decoration:none;
+    color:#7f1313;
+  }
+  .btn{
+    height:75px;
+    width:150px;
+    background:#1B1A19;
+    margin:3px;
+    border:2px solid black;
+    border-radius: 4px;
+    color:white;
+    font-size:25px;
+    outline:0px;
+  }
+  .btn:hover{
+    background-color:white;
+    color:black;
+    transition: 0.3s;
+    border:2px solid black;
+    box-shadow:none;
+  }
+</style>
+{% endblock %}
+{% block body %}
+<h1>Join A Lobby<h1>
+  <form action="/poker", method="POST">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="mb-3">
+          <label for="lobbyCode" class="form-label">Enter Lobby Code</label>
+          <input class="form-control" type="text" name="lobby">
+        </div>
+      </div>
+      <input id="lobbySubmit" type="submit" class="btn" value="Join Lobby">
+      <br>
+      <p style="color: red">{{ error }}</p>
+    </div>
+  </form>
+{% endblock %}

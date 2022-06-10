@@ -90,6 +90,13 @@ def register():
 
     return render_template("register.html")
 
+@app.route('/join_lobby', methods=['GET', 'POST'])
+def joinLobby():
+    if "username" in session:
+        return render_template('join_lobby.html')
+    else:
+        return redirect('/login')
+
 def createLobby():
     lobbyID = urandom(32)
     data = {

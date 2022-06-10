@@ -16,6 +16,24 @@
       text-decoration:none;
       color:#7f1313;
     }
+    .btn{
+  		height:75px;
+  		width:150px;
+  		background:#1B1A19;
+  		margin:3px;
+  		border:2px solid black;
+  		border-radius: 4px;
+  		color:white;
+  		font-size:25px;
+  		outline:0px;
+  	}
+    .btn:hover{
+  		background-color:white;
+  		color:black;
+  		transition: 0.3s;
+  		border:2px solid black;
+  		box-shadow:none;
+  	}
 </style>
 {% endblock %}
 
@@ -35,7 +53,7 @@
             <input class="credential-input form-control" type="password" name="password">
           </div>
         </div>
-        <input id="credential-submit" type="submit" class="btn btn-secondary" value="Login">
+        <input id="credential-submit" type="submit" class="btn" value="Login">
         <br>
         <p style="color: red">{{ error }}</p>
         <p> Don't have an account, yet? Please, <a href= "register"> register </a>! </p>

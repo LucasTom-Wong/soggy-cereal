@@ -12,6 +12,24 @@
     .container{
       text-align:center
     }
+    .btn{
+  		height:75px;
+  		width:150px;
+  		background:#1B1A19;
+  		margin:3px;
+  		border:2px solid black;
+  		border-radius: 4px;
+  		color:white;
+  		font-size:25px;
+  		outline:0px;
+  	}
+    .btn:hover{
+  		background-color:white;
+  		color:black;
+  		transition: 0.3s;
+  		border:2px solid black;
+  		box-shadow:none;
+  	}
 </style>
 {% endblock %}
 
@@ -40,7 +58,7 @@
           </div>
         </div>
         <!-- Register button -->
-      <input id="credential-submit" type="submit" class="btn btn-secondary" value="Register">
+      <input id="credential-submit" type="submit" class="btn" value="Register">
       <p style="color: red">{{error}}</p>
       </div>
     </form>
