@@ -481,6 +481,375 @@ def on_leave(data):
     room = data['room']
     leave_room(room)
     send(username + ' has left the room.', to=room)
+   
+#Start Combo
+def findCombo(list):
+    list1 = list.copy()
+    sorted = list1.sort()
+    
+    comboList = []
+
+    comboList.append(royalStraightFlush(list1))
+    comboList.append(straightFlush(list1))
+    comboList.append(fourOfAKind(list1))
+    comboList.append(house(list1))
+    comboList.append(flush(list1))
+    comboList.append(straight(list1))
+    comboList.append(threeOfAKind(list1))
+    comboList.append(twoPair(list1))
+    comboList.append(aPair(list1))
+    comboList.append(highestCard(list1))
+
+    res = []
+    for val in comboList:
+        if val != None:
+            res.append(val)
+            
+    if not comboList:
+        print("sum ting wong")
+    else:
+        return res
+
+def royalStraightFlush(list):
+    suitList = []
+    rankList = []
+    
+    for card in list:
+        suitList.append(card % 10)
+        rankList.append(int((card - (card % 10)) / 100))
+        
+    
+    if (suitList.count(max(set(suitList), key = suitList.count)) >= 5):
+        bsList = []
+        brList = []
+        mode = max(set(suitList), key = suitList.count)
+        while mode in suitList:
+            if (suitList[0] == mode):
+                bsList.append(mode)
+                brList.append(rankList[0])
+            suitList.pop(0)
+            rankList.pop(0)
+        
+        count = 1
+        sort = brList.sort()
+        previousRank = brList[0]
+        
+        for rank in brList:
+            if (isIncrement(previousRank, rank)):
+                count += 1
+            elif (rank == previousRank):
+                count += 0
+            else:
+                count = 1
+            previousRank = rank
+        if (count >= 4) and (previousRank == 13) and (brList[0] == 1):
+            return ["RSF"]
+
+def straightFlush(list):
+    suitList = []
+    rankList = []
+    
+    for card in list:
+        suitList.append(card % 10)
+        rankList.append(int((card - (card % 10)) / 100))
+        
+    
+    if (suitList.count(max(set(suitList), key = suitList.count)) >= 5):
+        bsList = []
+        brList = []
+        mode = max(set(suitList), key = suitList.count)
+        while mode in suitList:
+            if (suitList[0] == mode):
+                bsList.append(mode)
+                brList.append(rankList[0])
+            suitList.pop(0)
+            rankList.pop(0)
+        
+        count = 1
+        sort = brList.sort()
+        previousRank = brList[0]
+        
+        for rank in brList:
+            if (isIncrement(previousRank, rank)):
+                count += 1
+            elif (rank == previousRank):
+                count += 0
+            else:
+                count = 1
+            previousRank = rank
+        if count > 5:
+            return ["SF", brList[len(brList) - 1]]
+
+def fourOfAKind(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+    
+    if (rankList.count(max(set(rankList), key = rankList.count))) == 4:
+        return ["FOAK", rankList[len(rankList) - 1]]
+
+def house(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+    
+    if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
+        tripleRank = max(set(rankList), key = rankList.count)
+        for _ in range(3):
+            rankList.remove(tripleRank)
+        if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
+            return False
+        else:
+            if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+                doubleRank = max(set(rankList), key = rankList.count)
+                for _ in range(2):
+                    rankList.remove(doubleRank)
+                if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+                    return ["HOUSE", tripleRank, max(set(rankList), key = rankList.count)]
+                else:
+                    return ["HOUSE", tripleRank, doubleRank]
+
+def flush(list):
+    rankList = []
+    suitList = []
+    sortL = suitList.sort()
+    
+
+    for card in list:
+        suitList.append(card % 10)
+        rankList.append(int((card - (card % 10)) / 100))
+
+    bsList = []
+    brList = []
+    mode = max(set(suitList), key = suitList.count)
+    while mode in suitList:
+        if (suitList[0] == mode):
+            bsList.append(mode)
+            brList.append(rankList[0])
+        suitList.pop(0)
+        rankList.pop(0)
+    
+    if (len(bsList)) >= 5:
+        return ["FLUSH", brList[len(rankList) - 1]]
+
+def straight(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+
+    
+    count = 1
+    previousRank = rankList[0]
+    
+    for rank in rankList:
+        if (isIncrement(previousRank, rank)):
+            count += 1
+        elif (rank == previousRank):
+            count += 0
+        else:
+            count = 1
+        previousRank = rank
+    if count >= 5:
+        return ["STRAIGHT", previousRank]
+
+def threeOfAKind(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+    
+    if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
+        tripleRank = max(set(rankList), key = rankList.count)
+        for _ in range(3):
+            rankList.remove(tripleRank)
+        if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
+            return ["TOAK", max(set(rankList), key = rankList.count)]
+        else:
+            return ["TOAK", tripleRank]
+
+def twoPair(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+    
+    if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+        doubleRank = max(set(rankList), key = rankList.count)
+        for _ in range(2):
+            rankList.remove(doubleRank)
+        if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+            doubleRank2 = max(set(rankList), key = rankList.count)
+            for _ in range(2):
+                rankList.remove(doubleRank2)
+            if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+                return ["TP", max(set(rankList), key = rankList.count), doubleRank2]
+            else:
+                return [doubleRank2, doubleRank]
+
+def aPair(list):
+    rankList = []
+    
+    for card in list:
+        rankList.append(int((card - (card % 10)) / 100))
+    
+    if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+        doubleRank = max(set(rankList), key = rankList.count)
+        for _ in range(2):
+            rankList.remove(doubleRank)
+        if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+            doubleRank2 = max(set(rankList), key = rankList.count)
+            for _ in range(2):
+                rankList.remove(doubleRank2)
+            if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
+                return ["AP", max(set(rankList), key = rankList.count)]
+            else:
+                return ["AP", doubleRank1]
+        else:
+            return ["AP", doubleRank]
+
+def highestCard(list):
+    rankList = []
+    suitList = []
+    for card in list:
+        suitList.append(card % 10)
+        rankList.append(int((card - (card % 10)) / 100))
+    sortcry = rankList.sort(reverse=True)
+    sortcryagaing = suitList.sort(reverse=True)
+    
+    return ["HC", rankList[0], suitList[0]]
+        
+def isIncrement(num1, num2):
+    return num2 == num1 + 1
+
+
+# USE ME :D
+def findWinner(playerList):
+    communityCombo = findCombo(allCards[47], allCards[48], allCards[49], allCards[50], allCards[51])
+    
+    p1Combo = []
+    p2Combo = []
+    p3Combo = []
+    p4Combo = []
+    p5Combo = []
+    
+    tempWinnerList = []
+    highestCombo = 0
+    count = 0
+    for player in playerList:
+        tempCombo = findCombo(RSG(allCards[count]), RSG(allCards[count+1]), RSG(allCards[47]), RSG(allCards[48]), RSG(allCards[49]), RSG(allCards[50]), RSG(allCards[51]))
+        count += 2
+        
+        # Makes sure the combinations are made by the players and not by community cards
+        for combo in communityCombo:
+            if combo in tempCombo:
+                tempCombo.remove(combo)
+        
+        for fin in tempCombo:
+            if (["RSF"] == fin):
+                return [player]
+            elif (fin[0] == "SF"):
+                if highestCombo < 9:
+                    tempWinnerList = [player]
+                elif highestCombo == 9:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "FOAK"):
+                if highestCombo < 8:
+                    tempWinnerList = [player]
+                elif highestCombo == 8:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "HOUSE"):
+                if highestCombo < 7:
+                    tempWinnerList = [player]
+                elif highestCombo == 7:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "FLUSH"):
+                if highestCombo < 6:
+                    tempWinnerList = [player]
+                elif highestCombo == 6:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "STRAIGHT"):
+                if highestCombo < 5:
+                    tempWinnerList = [player]
+                elif highestCombo == 5:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "TOAK"):
+                if highestCombo < 4:
+                    tempWinnerList = [player]
+                elif highestCombo == 4:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "TP"):
+                if highestCombo < 3:
+                    tempWinnerList = [player]
+                elif highestCombo == 3:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "AP"):
+                if highestCombo < 2:
+                    tempWinnerList = [player]
+                elif highestCombo == 2:
+                    tempWinnerList.append[player]
+                break
+            elif (fin[0] == "HC"):
+                if highestCombo < 1:
+                    tempWinnerList = [player]
+                elif highestCombo == 1:
+                    tempWinnerList.append[player]
+                break
+
+            
+    
+# Rank and Suit Grabber
+def RSG(string):
+    rank = string[18]
+    suit = string[-5]
+    
+    rankSuitCode = 0
+    
+    if (rank == "A"):
+        rankSuitCode += 100
+    elif (rank == "2"):
+        rankSuitCode += 200
+    elif (rank == "3"):
+        rankSuitCode += 300
+    elif (rank == "4"):
+        rankSuitCode += 400
+    elif (rank == "5"):
+        rankSuitCode += 500
+    elif (rank == "6"):
+        rankSuitCode += 600
+    elif (rank == "7"):
+        rankSuitCode += 700
+    elif (rank == "8"):
+        rankSuitCode += 800
+    elif (rank == "9"):
+        rankSuitCode += 900
+    elif (rank == "1"):
+        rankSuitCode += 1000
+    elif (rank == "J"):
+        rankSuitCode += 1100
+    elif (rank == "Q"):
+        rankSuitCode += 1200
+    elif (rank == "K"):
+        rankSuitCode += 1300
+    
+    if (suit == "D"):
+        rankSuitCode += 1
+    elif (suit == "C"):
+        rankSuitCode += 2
+    elif (suit == "H"):
+        rankSuitCode += 3
+    elif (suit == "S"):
+        rankSuitCode += 4
+# End Combo
 
 def determineWinner():
     global setOfPlayers
