@@ -77,7 +77,7 @@ def updateUserWinLoss(username, boo):
 def getMoney(username):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("SELECT money FROM users WHERE username = (?)", (''+username))
+    c.execute("SELECT money FROM users WHERE username = (?)", (username,))
     return c.fetchall()[0][0]
     db.commit()
     db.close()
