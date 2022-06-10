@@ -22,6 +22,16 @@ function updateUserName(x){ //delete later
   username = x;
 }
 
+pot = document.getElementById("pot");
+function updatePot(amount){
+  potAmount = (pot.innerHTML).slice(1);
+  potAmount = parseInt(potAmount);
+  pot.innerHTML = "$" + (potAmount+amount);
+}
+
+timer = document.getElementById("timer");
+
+
 $(document).ready(function() {
 
 let namespace = '/test';
@@ -53,6 +63,7 @@ socket.on("response", function(msg, cb){ //when recieving response
   }
 
   if (parsedResponse["playerList"]['gameState'] == 0){
+    updatePot(150);
     dealerTurn = parsedResponse["playerList"]['dealer'];
     let money2 = (document.getElementById("money"+(dealerTurn+1)).innerHTML).slice(1);
     money2 = parseInt(money2);
@@ -159,6 +170,7 @@ socket.on('call_response', function(msg){
   let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let currentMoney = parseInt((document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let betDifference = parseInt(parsedResponse['previous_bet'])-currentBet;
+  updatePot(betDifference);
   document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
@@ -179,6 +191,7 @@ socket.on('raise_response', function(msg){
   let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let currentMoney = parseInt((document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let betDifference = parseInt(parsedResponse['previous_bet'])-currentBet;
+  updatePot(betDifference);
   document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML = "$" + (currentMoney-betDifference);
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "$"+parsedResponse['previous_bet'];
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
@@ -235,6 +248,10 @@ function checkGameState(gameState){
   }
   if (gameState == 4){
     revealCards();
+    buttonFold.disabled = true;
+    buttonCheck.disabled = true;
+    buttonCall.disabled = true;
+    buttonRaise.disabled = true;
   }
 }
 
