@@ -98,6 +98,8 @@ def joinLobby():
         return redirect('/login')
 
 def createLobby():
+    global currentPot
+    currentPot = 0
     lobbyID = urandom(32)
     data = {
         "id" : lobbyID,
@@ -131,6 +133,12 @@ playerList = {
     "previous_bet":100,
     "check":False
 }
+
+global setOfPlayers
+setOfPlayers = set()
+
+global currentPot
+currentPot = 0
 
 global playerNum
 playerNum=5
@@ -207,10 +215,6 @@ def getBet():
     else:
         return redirect("/")
 
-# @socket_.on("newlobby", namespace="/test")
-# def createNewLobby():
-#     createLobby()
-
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
     global numPlayers
@@ -220,6 +224,8 @@ def test_message(message):
         numPlayers = numPlayers + 1
         global playerList
         playerList[numPlayers] = [x['user'], getMoney(x['user'])]
+        global setOfPlayers
+        setOfPlayers.add(x["user"])
         if (numPlayers == 5):
             playerList['gameState'] = 0
             playerList['turn'] = playerList['turn']+3
@@ -242,6 +248,8 @@ def test_message(message):
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
+    global currentPot
+    currentPot = x.get('pot')
     if (x['user'] == playerList[playerList['turn']][0]):
         current = playerList['turn']
         playerList['folded'].append(playerList['turn'])
@@ -271,7 +279,9 @@ def fold_message_global(message):
 
         if (len(playerList['folded']) >= 4):
             print("ending game")
-            endTheGame()
+            winner = determineWinner()
+            money = determineMoney()
+            endTheGame(winner, money)
         else :
             emit('fold_response',
                 {'data': y, 'count': session['receive_count']},
@@ -387,11 +397,22 @@ def resetter():
         "check":False
     }
 
-def endTheGame():
+def determineWinner():
+    global setOfPlayers
+    global playerList
+    for player in setOfPlayers:
+        if (player not in playerList["folded"]):
+            return player
+    return "Bob"
+def determineMoney():
+    global currentPot
+    return currentPot;
+
+def endTheGame(winner, money):
     returnMessage = {
         "data-type" : "message",
-        "winner" : "Bob",
-        "amountWon" : 10
+        "winner" : winner,
+        "amountWon" : money
     }
     y = json.dumps(returnMessage)
 
@@ -412,6 +433,10 @@ def endTheGame():
         "previous_bet":100,
         "check":False
     }
+    global currentPot
+    currentPot = 0
+    global setOfPlayers
+    setOfPlayers = set()
 
     emit("endTheGame", {'data': y} ,broadcast=True)
 
