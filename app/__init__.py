@@ -98,8 +98,6 @@ def joinLobby():
     else:
         return redirect('/login')
 
-listLobbies;
-
 def createLobby(room_code):
     global currentPot
     currentPot = 0
@@ -457,8 +455,8 @@ def resetter():
         "turn":1,
         "previous_bet":100,
         "check":False
-    setOfPlayers = set()
     }
+    setOfPlayers = set()
 
 # @socket_.on("talking", namespace="/test")
 # def checkingUser(message):
@@ -481,12 +479,12 @@ def on_leave(data):
     room = data['room']
     leave_room(room)
     send(username + ' has left the room.', to=room)
-   
+
 #Start Combo
 def findCombo(list):
     list1 = list.copy()
     sorted = list1.sort()
-    
+
     comboList = []
 
     comboList.append(royalStraightFlush(list1))
@@ -504,7 +502,7 @@ def findCombo(list):
     for val in comboList:
         if val != None:
             res.append(val)
-            
+
     if not comboList:
         print("sum ting wong")
     else:
@@ -513,12 +511,12 @@ def findCombo(list):
 def royalStraightFlush(list):
     suitList = []
     rankList = []
-    
+
     for card in list:
         suitList.append(card % 10)
         rankList.append(int((card - (card % 10)) / 100))
-        
-    
+
+
     if (suitList.count(max(set(suitList), key = suitList.count)) >= 5):
         bsList = []
         brList = []
@@ -529,11 +527,11 @@ def royalStraightFlush(list):
                 brList.append(rankList[0])
             suitList.pop(0)
             rankList.pop(0)
-        
+
         count = 1
         sort = brList.sort()
         previousRank = brList[0]
-        
+
         for rank in brList:
             if (isIncrement(previousRank, rank)):
                 count += 1
@@ -548,12 +546,12 @@ def royalStraightFlush(list):
 def straightFlush(list):
     suitList = []
     rankList = []
-    
+
     for card in list:
         suitList.append(card % 10)
         rankList.append(int((card - (card % 10)) / 100))
-        
-    
+
+
     if (suitList.count(max(set(suitList), key = suitList.count)) >= 5):
         bsList = []
         brList = []
@@ -564,11 +562,11 @@ def straightFlush(list):
                 brList.append(rankList[0])
             suitList.pop(0)
             rankList.pop(0)
-        
+
         count = 1
         sort = brList.sort()
         previousRank = brList[0]
-        
+
         for rank in brList:
             if (isIncrement(previousRank, rank)):
                 count += 1
@@ -582,19 +580,19 @@ def straightFlush(list):
 
 def fourOfAKind(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
-    
+
     if (rankList.count(max(set(rankList), key = rankList.count))) == 4:
         return ["FOAK", rankList[len(rankList) - 1]]
 
 def house(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
-    
+
     if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
         tripleRank = max(set(rankList), key = rankList.count)
         for _ in range(3):
@@ -615,7 +613,7 @@ def flush(list):
     rankList = []
     suitList = []
     sortL = suitList.sort()
-    
+
 
     for card in list:
         suitList.append(card % 10)
@@ -630,20 +628,20 @@ def flush(list):
             brList.append(rankList[0])
         suitList.pop(0)
         rankList.pop(0)
-    
+
     if (len(bsList)) >= 5:
         return ["FLUSH", brList[len(rankList) - 1]]
 
 def straight(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
 
-    
+
     count = 1
     previousRank = rankList[0]
-    
+
     for rank in rankList:
         if (isIncrement(previousRank, rank)):
             count += 1
@@ -657,10 +655,10 @@ def straight(list):
 
 def threeOfAKind(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
-    
+
     if (rankList.count(max(set(rankList), key = rankList.count))) == 3:
         tripleRank = max(set(rankList), key = rankList.count)
         for _ in range(3):
@@ -672,10 +670,10 @@ def threeOfAKind(list):
 
 def twoPair(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
-    
+
     if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
         doubleRank = max(set(rankList), key = rankList.count)
         for _ in range(2):
@@ -691,10 +689,10 @@ def twoPair(list):
 
 def aPair(list):
     rankList = []
-    
+
     for card in list:
         rankList.append(int((card - (card % 10)) / 100))
-    
+
     if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
         doubleRank = max(set(rankList), key = rankList.count)
         for _ in range(2):
@@ -718,9 +716,9 @@ def highestCard(list):
         rankList.append(int((card - (card % 10)) / 100))
     sortcry = rankList.sort(reverse=True)
     sortcryagaing = suitList.sort(reverse=True)
-    
+
     return ["HC", rankList[0], suitList[0]]
-        
+
 def isIncrement(num1, num2):
     return num2 == num1 + 1
 
@@ -728,25 +726,25 @@ def isIncrement(num1, num2):
 # USE ME :D
 def findWinner(playerList):
     communityCombo = findCombo(allCards[47], allCards[48], allCards[49], allCards[50], allCards[51])
-    
+
     p1Combo = []
     p2Combo = []
     p3Combo = []
     p4Combo = []
     p5Combo = []
-    
+
     tempWinnerList = []
     highestCombo = 0
     count = 0
     for player in playerList:
         tempCombo = findCombo(RSG(allCards[count]), RSG(allCards[count+1]), RSG(allCards[47]), RSG(allCards[48]), RSG(allCards[49]), RSG(allCards[50]), RSG(allCards[51]))
         count += 2
-        
+
         # Makes sure the combinations are made by the players and not by community cards
         for combo in communityCombo:
             if combo in tempCombo:
                 tempCombo.remove(combo)
-        
+
         for fin in tempCombo:
             if (["RSF"] == fin):
                 return [player]
@@ -806,14 +804,14 @@ def findWinner(playerList):
                 break
 
     return tempWinnerList
-    
+
 # Rank and Suit Grabber
 def RSG(string):
     rank = string[18]
     suit = string[-5]
-    
+
     rankSuitCode = 0
-    
+
     if (rank == "A"):
         rankSuitCode += 100
     elif (rank == "2"):
@@ -840,7 +838,7 @@ def RSG(string):
         rankSuitCode += 1200
     elif (rank == "K"):
         rankSuitCode += 1300
-    
+
     if (suit == "D"):
         rankSuitCode += 1
     elif (suit == "C"):
