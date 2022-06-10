@@ -397,6 +397,14 @@ def resetter():
         "check":False
     }
 
+@socket_.on("talking", namespace="/test")
+def checkingUser(message):
+    emit('checking', {"data":"hi"})
+
+@socket_.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
 def determineWinner():
     global setOfPlayers
     global playerList
