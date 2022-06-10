@@ -14,6 +14,7 @@
 		background:gray;
 		margin:3px;
 		border:2px solid black;
+		border-radius: 4px;
 		color:white;
 		font-size:20px;
 		outline:0px;
@@ -37,19 +38,41 @@
 	.dealer{
 		color:red;
 	}
+	#return{
+		font-size:100px;
+	}
+	#returnButton{
+		height:50px;
+		width:200px;
+		background:gray;
+		margin:3px;
+		border:2px solid black;
+		border-radius: 4px;
+		color:white;
+		font-size:20px;
+		outline:0px;
+	}
+	#returnButton:hover {
+		background-color:white;
+		color:black;
+		transition: 0.3s;
+		border:2px solid black;
+		box-shadow:none;
+	}
 
 </style>
 {% endblock %}
 
 {% block body %}
-<p id="username" hidden=True>{{username}}</p>
+<p id="username" hidden=true>{{username}}</p>
 <div id="lobbyhui">
 	<div>
 		<p> Waiting for lobby to start! </p>
 	</div>
 </div>
 
-<div id = "gamehui" class="parent-container d-flex">
+<div id="gamehui">
+<div class="parent-container d-flex">
 	<div class="container" id="left">
 		<div class="row">
 				<div class="col">
@@ -172,6 +195,17 @@
 		<button id="callButton" class="btn" disabled=true>Call</button><br>
 		<button id="raiseButton" class="btn" disabled=true>Raise By $100</button>
 	</div>
+</div>
+</div>
+
+<div id="results" hidden=True>
+	The Winner Is:
+	<p id="winner"></p>
+	Amount Won:
+	<p id="finPot"></p>
+	<form action="/" method="post">
+		<input type="submit" id="returnButton" value="Return Home">
+	</form>
 </div>
 
 <script src="../static/js/poker.js"></script>

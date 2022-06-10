@@ -340,3 +340,11 @@ function gameStart(){
   farway.style.visibility = 'hidden';
   soonway.style.visibility = 'visible';
 }
+
+function endGame(winner, amountWon){
+  document.getElementById("winner").innerHTML = winner;
+  document.getElementById("finPot").innerHTML = amountWon;
+  document.getElementById("results").hidden = false;
+  document.getElementById("gamehui").hidden = true;
+  document.getElementById("lobbyhui").hidden = true;
+}
