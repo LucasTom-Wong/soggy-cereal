@@ -138,7 +138,7 @@ def game():
 @app.route("/reveal_cards", methods=['GET'])
 def reveal_cards(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = findLobby(room_code)
+        room = lobbies[room_code]
         cards = {
             "p1c1": room.returnDeck()[0],
             "p1c2": room.returnDeck()[1],
@@ -171,7 +171,7 @@ def flop(room_code):
 @app.route("/turn", methods=['GET'])
 def turn(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = findLobby(room_code)
+        room = lobbies[room_code]
         turn = {
             "1":room.returnDeck()[50],
         }
@@ -182,7 +182,7 @@ def turn(room_code):
 @app.route("/river", methods=['GET'])
 def river(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = findLobby(room_code)
+        room = lobbies[room_code]
         river = {
             "1":room.returnDeck()[51],
         }
@@ -193,7 +193,7 @@ def river(room_code):
 @app.route("/previous_bet", methods=['GET'])
 def getBet(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = findLobby(room_code)
+        room = lobbies[room_code]
         bet = {
             "bet":room.returnPlayerList()['check'],
         }
@@ -204,7 +204,8 @@ def getBet(room_code):
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     playerList = room.returnPlayerList()
     if (room.returnNumPlayers() < 5):
         session['receive_count'] = session.get('receive_count', 0) + 1
@@ -236,10 +237,11 @@ def test_message(message):
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     currentPot = room.returnCurrentPot()
     playerList = room.returnPlayerList()
-    if (x['user'] == playerList[playerList['turn']][0]):
+    if (x['user'] == playerList['turn']):
         current = playerList['turn']
         room.addToPlayerList('folded', playerList['turn'])
         print(playerList['folded'])
@@ -281,7 +283,8 @@ def fold_message_global(message):
 @socket_.on("kick_event", namespace="/test")
 def kick_message_global(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     currentPot = room.returnCurrentPot()
     playerList = room.returnPlayerList()
 
@@ -326,7 +329,8 @@ def kick_message_global(message):
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     playerList = room.returnPlayerList()
     current = playerList['turn']
     if (playerList['turn'] == 5):
@@ -360,7 +364,8 @@ def check_message_global(message):
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     playerList = room.returnPlayerList()
     current = playerList['turn']
     if (playerList['turn'] == 5):
@@ -395,7 +400,8 @@ def call_message_global(message):
 @socket_.on("raise_event", namespace="/test")
 def raise_message_global(message):
     x = json.loads(message["data"])
-    room = findLobby(x['room'])
+    room_code = x["room"]
+    room = lobbies[room_code]
     playerList = room.returnPlayerList()
     current = playerList['turn']
     room.updatePlayerList('check', False)
@@ -436,8 +442,11 @@ def updateMoney(message):
 @socket_.on("reset", namespace="/test")
 def resetter(message):
     print("reseeting")
-    room = findLobby(x['room'])
-    lobbies.remove(room)
+    x = lobbies.keys()
+    for room_code in x:
+        lobbies.pop(room_code)
+    lobbies.update({"" : Lobby()})
+    # room = lobbies[room_code]
 # @socket_.on("talking", namespace="/test")
 # def checkingUser(message):
 #     emit('checking', {"data":"hi"})
