@@ -49,7 +49,7 @@ socket.on('connect', function() { //when it connects to the server
 
   let sup_data = {
     "username" : username,
-    room : room_code
+    'room' : room_code
   }
   let supper = JSON.stringify(sup_data);
   socket.emit("join", {data: supper});
@@ -145,7 +145,7 @@ socket.on('endTheGame', function(msg) {
   endGame(parsed_response["winner"], parsed_response["amountWon"]);
   let sup_data = {
     "username" : username,
-    room : room_code
+    'room' : room_code
   }
   let supper = JSON.stringify(sup_data);
 
@@ -171,7 +171,8 @@ function start(playerTurn, playerList){
 function sendFoldMessage(){
   let dict_data = {
     "user" : username,
-    "pot" : pot.innerHTML
+    "pot" : pot.innerHTML,
+    "room" : room_code
   }
   let data = JSON.stringify(dict_data);
   socket.emit("fold_event", {data: data});
@@ -223,7 +224,8 @@ socket.on('fold_response', function(msg){
 function sendKickMessage(){
   if (timer.innerHTML == "-1"){
     let dict_data = {
-      "pot" : pot.innerHTML
+      "pot" : pot.innerHTML,
+      "room" : room_code
     }
     let data = JSON.stringify(dict_data);
     socket.emit("kick_event", {data: data});
@@ -232,7 +234,7 @@ function sendKickMessage(){
 }
 
 function sendCheckMessage(){
-  $.get("/previous_bet", function(bet) {
+  $.get("/previous_bet", {room_code: room_code}, function(bet) {
     let previous_bet = JSON.parse(bet);
     let check = previous_bet['bet'];
     let dict_data = {
@@ -387,7 +389,7 @@ function checkGameState(gameState){
 }
 
 function revealCards(){
-  $.get("/reveal_cards", function(cards) {
+  $.get("/reveal_cards", {room_code: room_code}, function(cards) {
       let cardDict = JSON.parse(cards);
       let numPlayers = cardDict['length'];
       if (numPlayers > 0){
@@ -420,7 +422,7 @@ let commc4 = document.getElementById("commc4");
 let commc5 = document.getElementById("commc5");
 
 function revealFlop(){
-  $.get("/flop", function(flop) {
+  $.get("/flop", {room_code: room_code}, function(flop) {
       let flopDict = JSON.parse(flop);
       commc1.src = flopDict["1"];
       commc2.src = flopDict["2"];
@@ -429,14 +431,14 @@ function revealFlop(){
 }
 
 function revealTurn(){
-  $.get("/turn", function(turn) {
+  $.get("/turn", {room_code: room_code}, function(turn) {
       let turnDict = JSON.parse(turn);
       commc4.src = turnDict["1"];
     });
 }
 
 function revealRiver(){
-  $.get("/river", function(river) {
+  $.get("/river", {room_code: room_code}, function(river) {
       let riverDict = JSON.parse(river);
       commc5.src = riverDict["1"];
     });

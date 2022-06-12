@@ -20,7 +20,7 @@ def createTables():
         gamestage TEXT NOT NULL,
         gamecards TEXT NOT NULL)
     """
-    c.execute()
+    c.execute(command)
     db.commit()
     db.close()
 

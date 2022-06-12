@@ -14,7 +14,7 @@ def createDeck():
     for rank in ranks:
       for suite in suites:
         deck.append("/static/card_svgs/"+rank + suite + ".svg")
-        random.shuffe(deck)
+        random.shuffle(deck)
     return deck
 
 def createCardList(player_num):

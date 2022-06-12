@@ -1,7 +1,9 @@
+from cards import *
+
 class Lobby:
     def __init__(self, name):
         self.name = name
-        self.numPlayers;
+        self.numPlayers = 0
         self.playerList = {
         "gameState": -1,
         1:["P1", "1000"],
@@ -16,33 +18,39 @@ class Lobby:
         "previous_bet":100,
         "check":False
         }
+        self.deck = createDeck()
         self.setOfPlayers = set()
         self.currentPot = 0
-        self.playerNum=5
+
+    def returnRoomCode(self):
+        return self.name
 
     def returnNumPlayers(self):
         return self.numPlayers
 
     def updateNumPlayers(self, new):
         self.numPlayers = new
-        return null
 
     def returnPlayerList(self):
         return self.playerList
 
+    def updatePlayerList(self, key, value):
+        self.playerList[key] = value
+
+    def addToPlayerList(self, key, value):
+        self.playerList[key].append(value)
+
     def returnSetOfPlayers(self):
         return self.setOfPlayers
+
+    def sop_add(self, user):
+        self.setOfPlayers.add(user)
 
     def returnCurrentPot(self):
         return self.currentPot
 
     def updateCurrentPot(self, new):
         self.currentPot = new
-        return null
 
-    def returnPlayerNum(self):
-        return self.playerNum
-
-    def updatePlayerNum(self, new):
-        self.playerNum = new
-        return null
+    def returnDeck(self):
+        return self.deck

@@ -6,6 +6,7 @@ import sqlite3, os.path
 import json
 import urllib
 import random
+import string
 from flask_socketio import SocketIO, emit, disconnect, join_room, leave_room
 from threading import Lock
 from lobby import *
@@ -98,51 +99,28 @@ def joinLobby():
     else:
         return redirect('/login')
 
+lobbies = []
+#TEMPORARY
+temp = Lobby('')
+lobbies.append(temp)
+
+def findLobby(roomCode):
+    for lobby in lobbies:
+        if (lobby.returnRoomCode() == roomCode):
+            return lobby
+        else:
+            return False
+
 def createLobby(room_code):
-    global currentPot
-    currentPot = 0
-    lobbyID = urandom(32)
-    data = {
-        "id" : lobbyID,
-        'numPlayers': 0,
-        "gameState": "not started",
-        1:["P1", "1000"],
-        2:["P2", "1000"],
-        3:["P3", "1000"],
-        4:["P4", "1000"],
-        5:["P5", "1000"],
-        "start_turn":1,
-        "turn":1,
-        'deck': createDeck()
-    }
-
-#TEMPORARY (adapted for lobbies later)
-global numPlayers
-numPlayers = 0
-global playerList
-playerList = {
-    "gameState": -1,
-    1:["P1", "1000"],
-    2:["P2", "1000"],
-    3:["P3", "1000"],
-    4:["P4", "1000"],
-    5:["P5", "1000"],
-    "folded": [],
-    "dealer":1,
-    "start_turn":3,
-    "turn":1,
-    "previous_bet":100,
-    "check":False
-}
-
-global setOfPlayers
-setOfPlayers = set()
-
-global currentPot
-currentPot = 0
-
-global playerNum
-playerNum=5
+    if (not findLobby(room_code)):
+        if (room_code == ""):
+            res = ''.join(random.choices(string.ascii_uppercase +
+                                 string.digits, k = 6))
+            room = Lobby(res)
+            return room
+        else:
+            room = Lobby(room_code)
+            return room
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
@@ -153,68 +131,79 @@ def game():
         room_code = ""
         if (request.method == 'POST'):
             room_code = request.form.get("lobbyCode")
+        if (findLobby('') == False):
+            room = createLobby(room_code)
+            lobbies.append(room)
+            playerList = room.returnPlayerList()
+        else:
+            room = findLobby('')
+            playerList = room.returnPlayerList()
             # print("room code is: " + room_code)
         return render_template('poker.html', player_list=playerList, username = username, room_code = room_code, async_mode=socket_.async_mode)
     else:
         return redirect('/login')
 
 @app.route("/reveal_cards", methods=['GET'])
-def reveal_cards():
+def reveal_cards(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        room = findLobby(room_code)
         cards = {
-            "p1c1": allCards[0],
-            "p1c2": allCards[1],
-            "p2c1": allCards[2],
-            "p2c2": allCards[3],
-            "p3c1": allCards[4],
-            "p3c2": allCards[5],
-            "p4c1": allCards[6],
-            "p4c2": allCards[7],
-            "p5c1": allCards[8],
-            "p5c2": allCards[9],
-            "length": len(playerList)
+            "p1c1": room.returnDeck()[0],
+            "p1c2": room.returnDeck()[1],
+            "p2c1": room.returnDeck()[2],
+            "p2c2": room.returnDeck()[3],
+            "p3c1": room.returnDeck()[4],
+            "p3c2": room.returnDeck()[5],
+            "p4c1": room.returnDeck()[6],
+            "p4c2": room.returnDeck()[7],
+            "p5c1": room.returnDeck()[8],
+            "p5c2": room.returnDeck()[9],
         }
         return json.dumps(cards)
     else:
         return redirect("/")
 
 @app.route("/flop", methods=['GET'])
-def flop():
+def flop(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        room = findLobby(room_code)
         flop = {
-            "1":allCards[47],
-            "2":allCards[48],
-            "3":allCards[49],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
         }
         return json.dumps(flop)
     else:
         return redirect("/")
 
 @app.route("/turn", methods=['GET'])
-def turn():
+def turn(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        room = findLobby(room_code)
         turn = {
-            "1":allCards[50],
+            "1":room.returnDeck()[50],
         }
         return json.dumps(turn)
     else:
         return redirect("/")
 
 @app.route("/river", methods=['GET'])
-def river():
+def river(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        room = findLobby(room_code)
         river = {
-            "1":allCards[51],
+            "1":room.returnDeck()[51],
         }
         return json.dumps(river)
     else:
         return redirect("/")
 
 @app.route("/previous_bet", methods=['GET'])
-def getBet():
+def getBet(room_code):
     if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+        room = findLobby(room_code)
         bet = {
-            "bet":playerList['check'],
+            "bet":room.returnPlayerList()['check'],
         }
         return json.dumps(bet)
     else:
@@ -222,57 +211,59 @@ def getBet():
 
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
-    global numPlayers
-    if (numPlayers < 5):
+    x = json.loads(message["data"])
+    room = findLobby(x['room'])
+    playerList = room.returnPlayerList()
+    if (room.returnNumPlayers() < 5):
         session['receive_count'] = session.get('receive_count', 0) + 1
-        x = json.loads(message["data"])
-        numPlayers = numPlayers + 1
-        global playerList
-        playerList[numPlayers] = [x['user'], getMoney(x['user'])]
-        global setOfPlayers
-        setOfPlayers.add(x["user"])
+        deck = room.returnDeck()
+        room.updateNumPlayers(room.returnNumPlayers()+1)
+        numPlayers = room.returnNumPlayers()
+        room.updatePlayerList(numPlayers, [x['user'], getMoney(x['user'])])
+        room.sop_add(x['user'])
         if (numPlayers == 5):
-            playerList['gameState'] = 0
-            playerList['turn'] = playerList['turn']+3
+            room.updatePlayerList('gameState', playerList['gameState']+1)
+            room.updatePlayerList('turn',playerList['turn']+3 )
         returnMessage = {
-            "hole1": [allCards[0], allCards[1]],
-            "hole2": [allCards[2], allCards[3]],
-            "hole3": [allCards[4], allCards[5]],
-            "hole4": [allCards[6], allCards[7]],
-            "hole5": [allCards[8], allCards[9]],
-            "playerList": playerList,
+            "hole1": [deck[0], deck[1]],
+            "hole2": [deck[2], deck[3]],
+            "hole3": [deck[4], deck[5]],
+            "hole4": [deck[6], deck[7]],
+            "hole5": [deck[8], deck[9]],
+            "playerList": room.returnPlayerList(),
             "data-type" : "console message",
             "message" : "connected!!! lets go! welcome user: " + x.get("user")
         }
-        room = x.get("room")
+        room_code = x.get("room")
         y = json.dumps(returnMessage)
-        print(playerList)
-        print(numPlayers)
+        print(room.returnPlayerList())
+        print(room.returnNumPlayers())
         emit('response',
-             {'data': y, 'count': session['receive_count']}, broadcast=True, to=room)
+             {'data': y, 'count': session['receive_count']}, broadcast=True, to=room_code)
 
 @socket_.on("fold_event", namespace="/test")
 def fold_message_global(message):
     x = json.loads(message["data"])
-    global currentPot
-    currentPot = x.get('pot')
+    room = findLobby(x['room'])
+    currentPot = room.returnCurrentPot()
+    playerList = room.returnPlayerList()
     if (x['user'] == playerList[playerList['turn']][0]):
         current = playerList['turn']
-        playerList['folded'].append(playerList['turn'])
+        room.addToPlayerList('folded', playerList['turn'])
         print(playerList['folded'])
         if (playerList['turn'] == 5):
-            playerList['turn'] = 1;
+            room.updatePlayerList('turn', 1)
         else:
-            playerList['turn'] = playerList['turn']+1
+            room.updatePlayerList('turn', playerList['turn']+1)
 
         while playerList['turn'] in playerList['folded']:
             if (playerList['turn'] == 5):
-                playerList['turn'] = 1;
+                room.updatePlayerList('turn', 1)
             else:
-                playerList['turn'] = playerList['turn']+1
+                room.updatePlayerList('turn', playerList['turn']+1)
         if (playerList['turn'] == playerList['start_turn']):
-            playerList['gameState'] = playerList['gameState'] +1
-            playerList['check'] = True
+            room.updatePlayerList('gameState', playerList['gameState']+1)
+            room.updatePlayerList('check', True)
         returnMessage = {
             "data-type" : "console message",
             "gameState" : playerList['gameState'],
@@ -287,35 +278,37 @@ def fold_message_global(message):
             print("ending game")
             winner = determineWinner()
             money = determineMoney()
-            room = x.get("room")
-            endTheGame(winner, money, room)
+            room_code = x.get("room")
+            endTheGame(winner, money, room_code)
         else :
-            room = x.get("room")
+            room_code = x.get("room")
             emit('fold_response',
                 {'data': y, 'count': session['receive_count']},
-                broadcast=True, to=room)
+                broadcast=True, to=room_code)
 
 @socket_.on("kick_event", namespace="/test")
 def kick_message_global(message):
     x = json.loads(message["data"])
-    global currentPot
-    currentPot = x.get('pot')
+    room = findLobby(x['room'])
+    currentPot = room.returnCurrentPot()
+    playerList = room.returnPlayerList()
 
     current = playerList['turn']
-    playerList['folded'].append(playerList['turn'])
+    room.addToPlayerList('folded', playerList['turn'])
     if (playerList['turn'] == 5):
-        playerList['turn'] = 1;
+        room.updatePlayerList('turn', 1)
     else:
-        playerList['turn'] = playerList['turn']+1
+        room.updatePlayerList('turn', playerList['turn']+1)
 
     while playerList['turn'] in playerList['folded']:
         if (playerList['turn'] == 5):
-            playerList['turn'] = 1;
+            room.updatePlayerList('turn', 1)
         else:
-            playerList['turn'] = playerList['turn']+1
+            room.updatePlayerList('turn', playerList['turn']+1)
+
     if (playerList['turn'] == playerList['start_turn']):
-        playerList['gameState'] = playerList['gameState'] +1
-        playerList['check'] = True
+        room.updatePlayerList('gameState', playerList['gameState']+1)
+        room.updatePlayerList('check', True)
     returnMessage = {
         "data-type" : "console message",
         "gameState" : playerList['gameState'],
@@ -330,30 +323,34 @@ def kick_message_global(message):
         print("ending game")
         winner = determineWinner()
         money = determineMoney()
-        room = x.get("room")
-        endTheGame(winner, money, room)
+        room_code = x.get("room")
+        endTheGame(winner, money, room_code)
     else :
-        room = x.get("room")
+        room_code = x.get("room")
         emit('fold_response',
             {'data': y, 'count': session['receive_count']},
-            broadcast=True, to=room)
+            broadcast=True, to=room_code)
 
 @socket_.on("check_event", namespace="/test")
 def check_message_global(message):
     x = json.loads(message["data"])
+    room = findLobby(x['room'])
+    playerList = room.returnPlayerList()
     current = playerList['turn']
     if (playerList['turn'] == 5):
-        playerList['turn'] = 1;
+        room.updatePlayerList('turn', 1)
     else:
-        playerList['turn'] = playerList['turn']+1
+        room.updatePlayerList('turn', playerList['turn']+1)
+
     while playerList['turn'] in playerList['folded']:
         if (playerList['turn'] == 5):
-            playerList['turn'] = 1;
+            room.updatePlayerList('turn', 1)
         else:
-            playerList['turn'] = playerList['turn']+1
+            room.updatePlayerList('turn', playerList['turn']+1)
+
     if (playerList['turn'] == playerList['start_turn']):
-        playerList['gameState'] = playerList['gameState'] +1
-        playerList['check'] = True
+        room.updatePlayerList('gameState', playerList['gameState']+1)
+        room.updatePlayerList('check', True)
     returnMessage = {
         "data-type" : "console message",
         "gameState" : playerList['gameState'],
@@ -363,27 +360,31 @@ def check_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    room = x.get("room")
+    room_code = x.get("room")
     emit('check_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True, to=room)
+         broadcast=True, to=room_code)
 
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
     x = json.loads(message["data"])
+    room = findLobby(x['room'])
+    playerList = room.returnPlayerList()
     current = playerList['turn']
     if (playerList['turn'] == 5):
-        playerList['turn'] = 1;
+        room.updatePlayerList('turn', 1)
     else:
-        playerList['turn'] = playerList['turn']+1
+        room.updatePlayerList('turn', playerList['turn']+1)
+
     while playerList['turn'] in playerList['folded']:
         if (playerList['turn'] == 5):
-            playerList['turn'] = 1;
+            room.updatePlayerList('turn', 1)
         else:
-            playerList['turn'] = playerList['turn']+1
+            room.updatePlayerList('turn', playerList['turn']+1)
+
     if (playerList['turn'] == playerList['start_turn']):
-        playerList['gameState'] = playerList['gameState'] +1
-        playerList['check'] = True
+        room.updatePlayerList('gameState', playerList['gameState']+1)
+        room.updatePlayerList('check', True)
     returnMessage = {
         "data-type" : "console message",
         "gameState" : playerList['gameState'],
@@ -394,27 +395,31 @@ def call_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    room = x.get("room")
+    room_code = x.get("room")
     emit('call_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True, to=room)
+         broadcast=True, to=room_code)
 
 @socket_.on("raise_event", namespace="/test")
 def raise_message_global(message):
     x = json.loads(message["data"])
+    room = findLobby(x['room'])
+    playerList = room.returnPlayerList()
     current = playerList['turn']
-    playerList['check'] = False
-    playerList['start_turn'] = playerList['turn']
+    room.updatePlayerList('check', False)
+    room.updatePlayerList('start_turn', playerList['turn'])
     if (playerList['turn'] == 5):
-        playerList['turn'] = 1;
+        room.updatePlayerList('turn', 1)
     else:
-        playerList['turn'] = playerList['turn']+1
+        room.updatePlayerList('turn', playerList['turn']+1)
+
     while playerList['turn'] in playerList['folded']:
         if (playerList['turn'] == 5):
-            playerList['turn'] = 1;
+            room.updatePlayerList('turn', 1)
         else:
-            playerList['turn'] = playerList['turn']+1
-    playerList['previous_bet'] = playerList['previous_bet']+100
+            room.updatePlayerList('turn', playerList['turn']+1)
+
+    room.updatePlayerList('previous_bet', playerList['previous_bet']+100)
     returnMessage = {
         "data-type" : "console message",
         "gameState" : playerList['gameState'],
@@ -425,10 +430,10 @@ def raise_message_global(message):
         "next_user" : playerList[playerList['turn']][0]
     }
     y = json.dumps(returnMessage)
-    room = x.get("room")
+    room_code = x.get("room")
     emit('raise_response',
          {'data': y, 'count': session['receive_count']},
-         broadcast=True, to=room)
+         broadcast=True, to=room_code)
 
 @socket_.on("update_money", namespace="/test")
 def updateMoney(message):
@@ -437,27 +442,10 @@ def updateMoney(message):
     updateUserMoney(x['user'], x['new_money'])
 
 @socket_.on("reset", namespace="/test")
-def resetter():
+def resetter(message):
     print("reseeting")
-    global numPlayers
-    numPlayers = 0
-    global playerList
-    playerList = {
-        "gameState": -1,
-        1:["P1", "1000"],
-        2:["P2", "1000"],
-        3:["P3", "1000"],
-        4:["P4", "1000"],
-        5:["P5", "1000"],
-        "folded": [],
-        "dealer":1,
-        "start_turn":3,
-        "turn":1,
-        "previous_bet":100,
-        "check":False
-    }
-    setOfPlayers = set()
-
+    room = findLobby(x['room'])
+    lobbies.remove(room)
 # @socket_.on("talking", namespace="/test")
 # def checkingUser(message):
 #     emit('checking', {"data":"hi"})
