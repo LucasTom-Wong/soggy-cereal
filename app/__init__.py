@@ -99,28 +99,21 @@ def joinLobby():
     else:
         return redirect('/login')
 
-lobbies = []
-#TEMPORARY
-temp = Lobby('')
-lobbies.append(temp)
+lobbies = {}
+lobbies.update({"" : Lobby()})
 
 def findLobby(roomCode):
-    for lobby in lobbies:
-        if (lobby.returnRoomCode() == roomCode):
-            return lobby
-        else:
-            return False
+    listOfLobbiesRoomCode = lobbies.keys()
+    checker = False
+    for lobby in listOfLobbiesRoomCode:
+        if (lobby == roomCode):
+            checker = True
+    if (not checker):
+        createLobby(roomCode)
 
-def createLobby(room_code):
-    if (not findLobby(room_code)):
-        if (room_code == ""):
-            res = ''.join(random.choices(string.ascii_uppercase +
-                                 string.digits, k = 6))
-            room = Lobby(res)
-            return room
-        else:
-            room = Lobby(room_code)
-            return room
+def createLobby(roomCode):
+    lobbies.update({roomCode : Lobby()})
+    # return lobbies(roomCode)
 
 @app.route("/poker", methods=['GET', 'POST'])
 def game():
@@ -131,14 +124,13 @@ def game():
         room_code = ""
         if (request.method == 'POST'):
             room_code = request.form.get("lobbyCode")
-        if (findLobby('') == False):
-            room = createLobby(room_code)
-            lobbies.append(room)
-            playerList = room.returnPlayerList()
-        else:
-            room = findLobby('')
-            playerList = room.returnPlayerList()
-            # print("room code is: " + room_code)
+        # grabs the lobbycode
+
+        findLobby(room_code) #ensures that the lobby exists
+
+        playerList = lobbies[room_code].returnPlayerList()
+
+        # print("room code is: " + room_code)
         return render_template('poker.html', player_list=playerList, username = username, room_code = room_code, async_mode=socket_.async_mode)
     else:
         return redirect('/login')

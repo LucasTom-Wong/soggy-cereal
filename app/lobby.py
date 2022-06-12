@@ -1,8 +1,7 @@
 from cards import *
 
 class Lobby:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.numPlayers = 0
         self.playerList = {
         "gameState": -1,
@@ -21,9 +20,6 @@ class Lobby:
         self.deck = createDeck()
         self.setOfPlayers = set()
         self.currentPot = 0
-
-    def returnRoomCode(self):
-        return self.name
 
     def returnNumPlayers(self):
         return self.numPlayers
