@@ -47,13 +47,6 @@ function resetTimer(){
 socket.on('connect', function() { //when it connects to the server
   console.log("Attempting to connect!");
 
-  let sup_data = {
-    "username" : username,
-    'room' : room_code
-  }
-  let supper = JSON.stringify(sup_data);
-  socket.emit("join", {data: supper});
-
   let dict_data  = {
     "user" : username,
     "room" : room_code
@@ -65,7 +58,7 @@ socket.on('connect', function() { //when it connects to the server
   // checkConnected();
 });
 
-socket.on("response", function(msg, cb){ //when recieving response
+socket.on("response", function(msg){ //when recieving response
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
 
@@ -422,45 +415,26 @@ let commc4 = document.getElementById("commc4");
 let commc5 = document.getElementById("commc5");
 
 function revealFlop(){
-  // $.get("/flop", {room_code: room_code}, function(flop) {
-  //     let flopDict = JSON.parse(flop);
-  //     commc1.src = flopDict["1"];
-  //     commc2.src = flopDict["2"];
-  //     commc3.src = flopDict["3"];
-  //   });
-  let dict_data = {
-    "user": username,
-    "room" : room_code
-  }
-  let data = JSON.stringify(dict_data);
-  socket.emit('flop', {'data': data});
+  $.get("/flop", {room_code: room_code}, function(flop) {
+      let flopDict = JSON.parse(flop);
+      commc1.src = flopDict["1"];
+      commc2.src = flopDict["2"];
+      commc3.src = flopDict["3"];
+    });
 }
 
 function revealTurn(){
-  // $.get("/turn", {room_code: room_code}, function(turn) {
-  //     let turnDict = JSON.parse(turn);
-  //     commc4.src = turnDict["1"];
-  //   });
-
-  let dict_data = {
-    "user": username,
-    "room" : room_code
-  }
-  let data = JSON.stringify(dict_data);
-  socket.emit('turn', {'data': data});
+  $.get("/turn", {room_code: room_code}, function(turn) {
+      let turnDict = JSON.parse(turn);
+      commc4.src = turnDict["1"];
+    });
 }
 
 function revealRiver(){
-  // $.get("/river", {room_code: room_code}, function(river) {
-  //     let riverDict = JSON.parse(river);
-  //     commc5.src = riverDict["1"];
-  //   });
-  let dict_data = {
-    "user": username,
-    "room" : room_code
-  }
-  let data = JSON.stringify(dict_data);
-  socket.emit('river', {'data': data});
+  $.get("/river", {room_code: room_code}, function(river) {
+      let riverDict = JSON.parse(river);
+      commc5.src = riverDict["1"];
+    });
 }
 
 });
