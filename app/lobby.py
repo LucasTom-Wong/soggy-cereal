@@ -30,6 +30,22 @@ class Lobby:
     def returnPlayerList(self):
         return self.playerList
 
+    def resetPlayerList(self):
+        self.playerList = {
+        "gameState": -1,
+        1:["P1", "1000"],
+        2:["P2", "1000"],
+        3:["P3", "1000"],
+        4:["P4", "1000"],
+        5:["P5", "1000"],
+        "folded": [],
+        "dealer":1,
+        "start_turn":3,
+        "turn":1,
+        "previous_bet":100,
+        "check":False
+        }
+
     def updatePlayerList(self, key, value):
         self.playerList[key] = value
 
