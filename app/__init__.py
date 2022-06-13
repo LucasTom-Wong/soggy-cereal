@@ -104,6 +104,7 @@ lobbies.update({"" : Lobby()})
 
 def findLobby(roomCode):
     listOfLobbiesRoomCode = lobbies.keys()
+    print(listOfLobbiesRoomCode)
     checker = False
     for lobby in listOfLobbiesRoomCode:
         if (lobby == roomCode):
@@ -240,7 +241,9 @@ def fold_message_global(message):
     room = lobbies[room_code]
     currentPot = room.returnCurrentPot()
     playerList = room.returnPlayerList()
-    if (x['user'] == playerList['turn']):
+    print(x['user'])
+    print(playerList[playerList['turn']])
+    if (x['user'] == playerList[playerList['turn']][0]):
         current = playerList['turn']
         room.addToPlayerList('folded', playerList['turn'])
         print(playerList['folded'])
