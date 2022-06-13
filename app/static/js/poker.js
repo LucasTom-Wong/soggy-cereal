@@ -125,7 +125,7 @@ socket.on("response", function(msg){ //when recieving response
       socket.emit('update_money', {'data': data});
       let dict_data2 = {
         "user": playerList[playerList['dealer']+2][0],
-        "new_money": -100,
+        "new_money": 100,
         'room': room_code
       }
       let data2 = JSON.stringify(dict_data2);

@@ -1,3 +1,0 @@
-https://codepen.io/gaearon/pen/gWWZgR?editors=1000
-https://www.fullstackpython.com/react.html
-https://github.com/ivailop7/LiveStreamingWithWebsockets
