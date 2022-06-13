@@ -30,7 +30,8 @@ class Lobby:
     def returnPlayerList(self):
         return self.playerList
 
-    def resetPlayerList(self):
+    def reset(self):
+        self.numPlayers = 0
         self.playerList = {
         "gameState": -1,
         1:["P1", "1000"],
@@ -45,6 +46,9 @@ class Lobby:
         "previous_bet":100,
         "check":False
         }
+        self.deck = createDeck()
+        self.setOfPlayers = set()
+        self.currentPot = 0
 
     def updatePlayerList(self, key, value):
         self.playerList[key] = value

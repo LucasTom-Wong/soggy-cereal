@@ -626,13 +626,13 @@ def updateMoney(message):
     room = lobbies[x['room']]
     updateUserMoney(x['user'], 0-x['new_money'])
 
-@socket_.on("reset", namespace="/test")
-def resetter():
-    print("reseeting")
-    x = lobbies.copy().keys()
-    for room_code in x:
-        lobbies.pop(room_code)
-    lobbies.update({"" : Lobby()})
+#@socket_.on("reset", namespace="/test")
+#def resetter():
+#    print("reseeting")
+#    x = lobbies.copy().keys()
+#    for room_code in x:
+#        lobbies.pop(room_code)
+#    lobbies.update({"" : Lobby()})
     # room = lobbies[room_code]
 # @socket_.on("talking", namespace="/test")
 # def checkingUser(message):
@@ -1090,7 +1090,7 @@ def endTheGame(winners, money, room):
         addMoney(playerList[i][0])
         i = i+1
 
-    lobbies[room].resetPlayerList()
+    lobbies[room].reset()
 
     lobbies[room].newSetOfPlayers()
 
