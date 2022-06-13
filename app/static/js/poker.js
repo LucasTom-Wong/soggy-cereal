@@ -235,8 +235,10 @@ socket.on('fold_response', function(msg){
 
 function sendKickMessage(){
   if (timer.innerHTML == "-1"){
+    let money = pot.innerHTML;
+    money = money.slice(1);
     let dict_data = {
-      "pot" : pot.innerHTML,
+      "pot" : parseInt(money),
       "room" : room_code
     }
     let data = JSON.stringify(dict_data);
@@ -246,9 +248,12 @@ function sendKickMessage(){
 }
 
 function sendCheckMessage(){
+  let money = pot.innerHTML;
+  money = money.slice(1);
   let dict_data = {
     "user" : username,
-    "room" : room_code
+    "room" : room_code,
+    "pot" : parseInt(money)
   }
   let data = JSON.stringify(dict_data);
   socket.emit("check_event", {data: data});
@@ -280,9 +285,12 @@ socket.on('check_response', function(msg){
 });
 
 function sendCallMessage(){
+  let money = pot.innerHTML;
+  money = money.slice(1);
   let dict_data = {
     "user" : username,
-    "room" : room_code
+    "room" : room_code,
+    "pot" : parseInt(money)
   }
   let data = JSON.stringify(dict_data);
   socket.emit("call_event", {data: data});

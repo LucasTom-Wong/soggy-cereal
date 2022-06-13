@@ -880,7 +880,7 @@ def aPair(list):
             if (rankList.count(max(set(rankList), key = rankList.count))) == 2:
                 return ["AP", max(set(rankList), key = rankList.count)]
             else:
-                return ["AP", doubleRank1]
+                return ["AP", doubleRank2]
         else:
             return ["AP", doubleRank]
 
@@ -901,7 +901,7 @@ def isIncrement(num1, num2):
 
 # USE ME :D
 def findWinner(playerList, deck):
-    communityCombo = findCombo([deck[47], deck[48], deck[49], deck[50], deck[51]])
+    communityCombo = findCombo([RSG(deck[47]), RSG(deck[48]), RSG(deck[49]), RSG(deck[50]), RSG(deck[51])])
 
     p1Combo = []
     p2Combo = []
@@ -1023,9 +1023,22 @@ def RSG(string):
         rankSuitCode += 3
     elif (suit == "S"):
         rankSuitCode += 4
+
+    return rankSuitCode
 # End Combo
 
 def determineWinner(room_code, type):
+    setOfPlayers = lobbies[room_code].returnSetOfPlayers()
+    playerList = lobbies[room_code].returnPlayerList()
+    playerSpots = [1, 2, 3, 4, 5]
+    foldedList = []
+    foldedNames = []
+    i = 0
+    while i < len(playerList['folded']):
+        spot = playerList['folded'][i]
+        foldedList.append(spot)
+        foldedNames.append(playerList[spot][0])
+        i = i+1
     if (type == "fold"):
         print("fold win")
         setOfPlayers = lobbies[room_code].returnSetOfPlayers()
@@ -1039,10 +1052,10 @@ def determineWinner(room_code, type):
         print(foldedList)
         print(setOfPlayers)
         for player in setOfPlayers:
-            if (player in foldedList):
+            if (player in foldedNames):
                 updateUserLoss(player)
         for player in setOfPlayers:
-            if (player not in foldedList):
+            if (player not in foldedNames):
                 updateUserWin(player)
                 winners = [player]
                 return winners
@@ -1050,13 +1063,10 @@ def determineWinner(room_code, type):
     elif (type == "showdown"):
         print("showdown")
         room = lobbies[room_code]
-        pList = {
-            "p1":[room.returnDeck()[0], room.returnDeck()[1]],
-            "p2":[room.returnDeck()[2], room.returnDeck()[3]],
-            "p3":[room.returnDeck()[4], room.returnDeck()[5]],
-            "p4":[room.returnDeck()[6], room.returnDeck()[7]],
-            "p5":[room.returnDeck()[8], room.returnDeck()[9]]
-        }
+        pList = {}
+        for player in playerSpots:
+            if (player not in foldedList):
+                pList[playerList[player][0]] = [room.returnDeck()[(player-1)*2], room.returnDeck()[((player-1)*2)+1]]
         winners = findWinner(pList, room.returnDeck())
         return winners
 
