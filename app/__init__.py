@@ -227,7 +227,6 @@ def test_message(message):
             "data-type" : "console message",
             "message" : "connected!!! lets go! welcome user: " + x.get("user")
         }
-        room_code = x.get("room")
         y = json.dumps(returnMessage)
         print(room.returnPlayerList())
         print(room.returnNumPlayers())
@@ -272,10 +271,8 @@ def fold_message_global(message):
             print("ending game")
             winner = determineWinner()
             money = determineMoney()
-            room_code = x.get("room")
             endTheGame(winner, money, room_code)
         else :
-            room_code = x.get("room")
             emit('fold_response',
                 {'data': y, 'count': session['receive_count']},
                 broadcast=True, to=room_code)
@@ -440,9 +437,9 @@ def updateMoney(message):
     updateUserMoney(x['user'], x['new_money'])
 
 @socket_.on("reset", namespace="/test")
-def resetter(message):
+def resetter():
     print("reseeting")
-    x = lobbies.keys()
+    x = lobbies.copy().keys()
     for room_code in x:
         lobbies.pop(room_code)
     lobbies.update({"" : Lobby()})
@@ -870,16 +867,18 @@ def endTheGame(winner, money, room):
 
     updateUserMoney(winner, int(money[1:]))
 
-    global numPlayers
-    numPlayers = 0
-    global playerList
+    lobby = lobbies(room)
+
+    lobbies(room).updateNumPlayers(0)
+
+    playerList = lobby.returnPlayerList()
 
     i = 1
     while i < 6:
         addMoney(playerList[i][0])
         i = i+1
 
-    playerList = {
+    lobbies(room).updatePlayerList({
         "gameState": -1,
         1:["P1", "1000"],
         2:["P2", "1000"],
@@ -892,11 +891,12 @@ def endTheGame(winner, money, room):
         "turn":1,
         "previous_bet":100,
         "check":False
-    }
-    global currentPot
-    currentPot = 0
-    global setOfPlayers
-    setOfPlayers = set()
+    })
+
+    lobbies(room).updateCurrentPot(0)
+
+    lobbies(room).newSetOfPlayers()
+
     emit("endTheGame", {'data': y} ,broadcast=True, to=room)
 
 

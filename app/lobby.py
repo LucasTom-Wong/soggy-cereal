@@ -39,6 +39,9 @@ class Lobby:
     def returnSetOfPlayers(self):
         return self.setOfPlayers
 
+    def newSetOfPlayers(self):
+        self.setOfPlayers = set()
+
     def sop_add(self, user):
         self.setOfPlayers.add(user)
 
