@@ -131,8 +131,11 @@ def game():
 
         playerList = lobbies[room_code].returnPlayerList()
 
-        # print("room code is: " + room_code)
-        return render_template('poker.html', player_list=playerList, username = username, room_code = room_code, async_mode=socket_.async_mode)
+        if (lobbies[room_code].returnNumPlayers() == 5):
+            return render_template('join_lobby.html', error="ROOM IS FULL")
+        else:
+            # print("room code is: " + room_code)
+            return render_template('poker.html', player_list=playerList, username = username, room_code = room_code, async_mode=socket_.async_mode)
     else:
         return redirect('/login')
 
@@ -243,7 +246,7 @@ def fold_message_global(message):
     currentPot = room.returnCurrentPot()
     playerList = room.returnPlayerList()
     print(x['user'])
-    print(playerList['turn'])
+    print(playerList[playerList['turn']])
     if (x['user'] == playerList[playerList['turn']][0]):
         current = playerList['turn']
         room.addToPlayerList('folded', playerList['turn'])
@@ -273,8 +276,8 @@ def fold_message_global(message):
 
         if (len(playerList['folded']) >= 4):
             print("ending game")
-            winner = determineWinner(room_code)
-            money = determineMoney(room_code)
+            winner = determineWinner()
+            money = determineMoney()
             endTheGame(winner, money, room_code)
         else :
             emit('fold_response',
@@ -317,8 +320,8 @@ def kick_message_global(message):
 
     if (len(playerList['folded']) >= 4):
         print("ending game")
-        winner = determineWinner(room_code)
-        money = determineMoney(room_code)
+        winner = determineWinner()
+        money = determineMoney()
         room_code = x.get("room")
         endTheGame(winner, money, room_code)
     else :
@@ -839,13 +842,13 @@ def RSG(string):
         rankSuitCode += 4
 # End Combo
 
-def determineWinner(roomCode):
-    setOfPlayers = lobbies[roomCode].returnSetOfPlayers()
-    playerList = lobbies[roomCode].returnPlayerList()
+def determineWinner():
+    global setOfPlayers
+    global playerList
     foldedList = []
     i = 0
     while i < len(playerList['folded']):
-        foldedList.append(playerList['folded'][i])
+        foldedList.append(playerList[playerList['folded'][i]][0])
         i = i+1
     print(foldedList)
     for player in setOfPlayers:
@@ -857,8 +860,8 @@ def determineWinner(roomCode):
             return player
     return "Bob"
 
-def determineMoney(roomCode):
-    currentPot = lobbies[roomCode].returnCurrentPot()
+def determineMoney():
+    global currentPot
     return currentPot;
 
 def endTheGame(winner, money, room):
@@ -869,11 +872,11 @@ def endTheGame(winner, money, room):
     }
     y = json.dumps(returnMessage)
 
-    updateUserMoney(winner, int(money))
+    updateUserMoney(winner, int(money[1:]))
 
-    lobby = lobbies[room]
+    lobby = lobbies(room)
 
-    lobbies[room].updateNumPlayers(0)
+    lobbies(room).updateNumPlayers(0)
 
     playerList = lobby.returnPlayerList()
 
@@ -882,11 +885,24 @@ def endTheGame(winner, money, room):
         addMoney(playerList[i][0])
         i = i+1
 
-    lobbies[room].resetPlayerList()
+    lobbies(room).updatePlayerList({
+        "gameState": -1,
+        1:["P1", "1000"],
+        2:["P2", "1000"],
+        3:["P3", "1000"],
+        4:["P4", "1000"],
+        5:["P5", "1000"],
+        "folded": [],
+        "dealer":1,
+        "start_turn":3,
+        "turn":1,
+        "previous_bet":100,
+        "check":False
+    })
 
-    lobbies[room].updateCurrentPot(0)
+    lobbies(room).updateCurrentPot(0)
 
-    lobbies[room].newSetOfPlayers()
+    lobbies(room).newSetOfPlayers()
 
     emit("endTheGame", {'data': y} ,broadcast=True, to=room)
 
