@@ -422,26 +422,45 @@ let commc4 = document.getElementById("commc4");
 let commc5 = document.getElementById("commc5");
 
 function revealFlop(){
-  $.get("/flop", {room_code: room_code}, function(flop) {
-      let flopDict = JSON.parse(flop);
-      commc1.src = flopDict["1"];
-      commc2.src = flopDict["2"];
-      commc3.src = flopDict["3"];
-    });
+  // $.get("/flop", {room_code: room_code}, function(flop) {
+  //     let flopDict = JSON.parse(flop);
+  //     commc1.src = flopDict["1"];
+  //     commc2.src = flopDict["2"];
+  //     commc3.src = flopDict["3"];
+  //   });
+  let dict_data = {
+    "user": username,
+    "room" : room_code
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit('flop', {'data': data});
 }
 
 function revealTurn(){
-  $.get("/turn", {room_code: room_code}, function(turn) {
-      let turnDict = JSON.parse(turn);
-      commc4.src = turnDict["1"];
-    });
+  // $.get("/turn", {room_code: room_code}, function(turn) {
+  //     let turnDict = JSON.parse(turn);
+  //     commc4.src = turnDict["1"];
+  //   });
+
+  let dict_data = {
+    "user": username,
+    "room" : room_code
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit('turn', {'data': data});
 }
 
 function revealRiver(){
-  $.get("/river", {room_code: room_code}, function(river) {
-      let riverDict = JSON.parse(river);
-      commc5.src = riverDict["1"];
-    });
+  // $.get("/river", {room_code: room_code}, function(river) {
+  //     let riverDict = JSON.parse(river);
+  //     commc5.src = riverDict["1"];
+  //   });
+  let dict_data = {
+    "user": username,
+    "room" : room_code
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit('river', {'data': data});
 }
 
 });

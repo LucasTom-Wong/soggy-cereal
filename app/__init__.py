@@ -155,51 +155,51 @@ def reveal_cards(room_code):
     else:
         return redirect("/")
 
-@app.route("/flop", methods=['GET'])
-def flop(room_code):
-    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = findLobby(room_code)
-        flop = {
-            "1":room.returnDeck()[47],
-            "2":room.returnDeck()[48],
-            "3":room.returnDeck()[49],
-        }
-        return json.dumps(flop)
-    else:
-        return redirect("/")
+@socket_.on('flop', namespace='/test')
+def flop():
+    x = json.loads(message["data"])
+    room_code = x["room"]
+    room = lobbies[room_code]
+    flop = {
+        "1":room.returnDeck()[47],
+        "2":room.returnDeck()[48],
+        "3":room.returnDeck()[49],
+    }
+    y=json.dumps(flop)
+    emit('response',
+        {'data': y, 'count': session['receive_count']}, broadcast=True, to=room_code)
 
-@app.route("/turn", methods=['GET'])
-def turn(room_code):
-    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = lobbies[room_code]
-        turn = {
-            "1":room.returnDeck()[50],
-        }
-        return json.dumps(turn)
-    else:
-        return redirect("/")
+@socket_.on('turn', namespace='/test')
+def turn():
+    x = json.loads(message["data"])
+    room_code = x["room"]
+    room = lobbies[room_code]
+    turn = {
+        "1":room.returnDeck()[50],
+    }
+    y=json.dumps(turn)
+    emit('response',
+        {'data': y, 'count': session['receive_count']}, broadcast=True, to=room_code)
 
-@app.route("/river", methods=['GET'])
-def river(room_code):
-    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
-        room = lobbies[room_code]
-        river = {
-            "1":room.returnDeck()[51],
-        }
-        return json.dumps(river)
-    else:
-        return redirect("/")
+@socket_.on('river', namespace='/test')
+def river():
+    x = json.loads(message["data"])
+    room_code = x["room"]
+    room = lobbies[room_code]
+    river = {
+        "1":room.returnDeck()[51],
+    }
+    y=json.dumps(river)
+    emit('response',
+        {'data': y, 'count': session['receive_count']}, broadcast=True, to=room_code)
 
-@app.route("/previous_bet", methods=['GET'])
-def getBet(room_code):
-    if (request.headers.get("X-Requested-With") == "XMLHttpRequest"):
+@socket_.on('previous_bet', namespace='/test')
+def getBet():
         room = lobbies[room_code]
         bet = {
             "bet":room.returnPlayerList()['check'],
         }
         return json.dumps(bet)
-    else:
-        return redirect("/")
 
 @socket_.on('connecting', namespace='/test')
 def test_message(message):
