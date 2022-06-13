@@ -1044,7 +1044,8 @@ def determineWinner(room_code, type):
         for player in setOfPlayers:
             if (player not in foldedList):
                 updateUserWin(player)
-                return player
+                winners = [player]
+                return winners
         return "Bob"
     elif (type == "showdown"):
         print("showdown")
@@ -1057,17 +1058,26 @@ def determineWinner(room_code, type):
             "p5":[room.returnDeck()[8], room.returnDeck()[9]]
         }
         winners = findWinner(pList, room.returnDeck())
-        return winners[0]
+        return winners
 
-def endTheGame(winner, money, room):
+def endTheGame(winners, money, room):
+
+    money = money/len(winners)
+
+    winnerString = ""
+
+    for winner in winners:
+        winnerString = winnerString + winner + ", "
+        updateUserMoney(winner, int(money))
+
+    winnerString = winnerString[0:len(winnerString)-2]
+
     returnMessage = {
         "data-type" : "message",
-        "winner" : winner,
+        "winner" : winnerString,
         "amountWon" : money
     }
     y = json.dumps(returnMessage)
-
-    updateUserMoney(winner, int(money))
 
     lobby = lobbies[room]
 
