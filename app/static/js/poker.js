@@ -208,7 +208,15 @@ socket.on('fold_response', function(msg){
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
 
-  checkGameState(parsedResponse['gameState']);
+  if (parsedResponse['gameState'] == 1){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+  }else if (parsedResponse['gameState'] == 2){
+    commc4.src = parsedResponse["4"];
+  }else if (parsedResponse['gameState'] == 3){
+    commc5.src = parsedResponse['5'];
+  }
   console.log(parsedResponse['fold_user'] + " folded")
   document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML = "FOLDED";
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);

@@ -264,14 +264,47 @@ def fold_message_global(message):
         if (playerList['turn'] == playerList['start_turn']):
             room.updatePlayerList('gameState', playerList['gameState']+1)
             room.updatePlayerList('check', True)
-        returnMessage = {
-            "data-type" : "console message",
-            "gameState" : playerList['gameState'],
-            "fold_user" : x['user'],
-            "current_turn" : current,
-            "next_turn" : playerList['turn'],
-            "next_user" : playerList[playerList['turn']][0]
-        }
+        if (playerList['gameState'] == 1):
+            returnMessage = {
+                "data-type" : "console message",
+                "gameState" : playerList['gameState'],
+                "fold_user" : x['user'],
+                "current_turn" : current,
+                "next_turn" : playerList['turn'],
+                "next_user" : playerList[playerList['turn']][0],
+                "1":room.returnDeck()[47],
+                "2":room.returnDeck()[48],
+                "3":room.returnDeck()[49],
+            }
+        elif (playerList['gameState'] == 2):
+            returnMessage = {
+                "data-type" : "console message",
+                "gameState" : playerList['gameState'],
+                "fold_user" : x['user'],
+                "current_turn" : current,
+                "next_turn" : playerList['turn'],
+                "next_user" : playerList[playerList['turn']][0],
+                "4":room.returnDeck()[50],
+            }
+        elif (playerList['gameState'] == 3):
+            returnMessage = {
+                "data-type" : "console message",
+                "gameState" : playerList['gameState'],
+                "fold_user" : x['user'],
+                "current_turn" : current,
+                "next_turn" : playerList['turn'],
+                "next_user" : playerList[playerList['turn']][0],
+                "5":room.returnDeck()[51],
+            }
+        else:
+            returnMessage = {
+                "data-type" : "console message",
+                "gameState" : playerList['gameState'],
+                "fold_user" : x['user'],
+                "current_turn" : current,
+                "next_turn" : playerList['turn'],
+                "next_user" : playerList[playerList['turn']][0]
+            }
         y = json.dumps(returnMessage)
 
         if (len(playerList['folded']) >= 4):
