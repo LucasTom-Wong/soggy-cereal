@@ -314,7 +314,7 @@ socket.on('call_response', function(msg){
   if (buttonFold.disabled == false){
     let dict_data = {
       "user": username,
-      "new_money": 0-betDifference,
+      "new_money": betDifference,
       "room" : room_code
     }
     let data = JSON.stringify(dict_data);
