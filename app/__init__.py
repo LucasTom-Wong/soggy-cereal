@@ -222,7 +222,6 @@ def test_message(message):
         if (numPlayers == 5):
             room.updatePlayerList('gameState', playerList['gameState']+1)
             room.updatePlayerList('turn',playerList['turn']+3 )
-            room.updateCurrentPot(150)
     returnMessage = {
         "hole1": [deck[0], deck[1]],
         "hole2": [deck[2], deck[3]],
@@ -317,12 +316,12 @@ def fold_message_global(message):
 
         if (playerList['gameState'] == 4):
             winner = determineWinner(room_code, "showdown")
-            money = determineMoney(room_code)
+            money = x['pot']
             endTheGame(winner, money, room_code)
         elif (len(playerList['folded']) >= 4):
             print("ending game")
-            winner = determineWinner(room_code, "folded")
-            money = determineMoney(room_code)
+            winner = determineWinner(room_code, "fold")
+            money = x['pot']
             endTheGame(winner, money, room_code)
         else :
             emit('fold_response',
@@ -405,12 +404,12 @@ def kick_message_global(message):
 
     if (playerList['gameState'] == 4):
         winner = determineWinner(room_code, "showdown")
-        money = determineMoney(room_code)
+        money = x['pot']
         endTheGame(winner, money, room_code)
     elif (len(playerList['folded']) >= 4):
         print("ending game")
         winner = determineWinner(room_code, "fold")
-        money = determineMoney()
+        money = x['pot']
         room_code = x.get("room")
         endTheGame(winner, money, room_code)
     else :
@@ -492,7 +491,7 @@ def check_message_global(message):
 
     if (playerList['gameState'] == 4):
         winner = determineWinner(room_code, "showdown")
-        money = determineMoney(room_code)
+        money = x['pot']
         endTheGame(winner, money, room_code)
     elif (playerList['check']):
         emit('check_response',
@@ -577,7 +576,7 @@ def call_message_global(message):
     room_code = x.get("room")
     if (playerList['gameState'] == 4):
         winner = determineWinner(room_code, "showdown")
-        money = determineMoney(room_code)
+        money = x['pot']
         endTheGame(winner, money, room_code)
     else:
         emit('call_response',
@@ -605,7 +604,6 @@ def raise_message_global(message):
             room.updatePlayerList('turn', playerList['turn']+1)
 
     room.updatePlayerList('previous_bet', playerList['previous_bet']+100)
-    room.updateCurrentPot(room.returnCurrentPot()+100)
     returnMessage = {
         "data-type" : "console message",
         "gameState" : playerList['gameState'],
@@ -626,7 +624,6 @@ def updateMoney(message):
     print("updating money")
     x = json.loads(message["data"])
     room = lobbies[x['room']]
-    room.updateCurrentPot(room.returnCurrentPot()+x['new_money'])
     updateUserMoney(x['user'], 0-x['new_money'])
 
 @socket_.on("reset", namespace="/test")
@@ -1030,14 +1027,17 @@ def RSG(string):
 
 def determineWinner(room_code, type):
     if (type == "fold"):
+        print("fold win")
         setOfPlayers = lobbies[room_code].returnSetOfPlayers()
         playerList = lobbies[room_code].returnPlayerList()
         foldedList = []
         i = 0
         while i < len(playerList['folded']):
-            foldedList.append(playerList['folded'][i])
+            spot = playerList['folded'][i]
+            foldedList.append(playerList[spot][0])
             i = i+1
         print(foldedList)
+        print(setOfPlayers)
         for player in setOfPlayers:
             if (player in foldedList):
                 updateUserLoss(player)
@@ -1047,6 +1047,7 @@ def determineWinner(room_code, type):
                 return player
         return "Bob"
     elif (type == "showdown"):
+        print("showdown")
         room = lobbies[room_code]
         pList = {
             "p1":[room.returnDeck()[0], room.returnDeck()[1]],
@@ -1057,10 +1058,6 @@ def determineWinner(room_code, type):
         }
         winners = findWinner(pList, room.returnDeck())
         return winners[0]
-
-def determineMoney(room_code):
-    currentPot = lobbies[room_code].returnCurrentPot()
-    return currentPot;
 
 def endTheGame(winner, money, room):
     returnMessage = {
@@ -1084,8 +1081,6 @@ def endTheGame(winner, money, room):
         i = i+1
 
     lobbies[room].resetPlayerList()
-
-    lobbies[room].updateCurrentPot(0)
 
     lobbies[room].newSetOfPlayers()
 

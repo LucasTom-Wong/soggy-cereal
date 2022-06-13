@@ -118,13 +118,15 @@ socket.on("response", function(msg){ //when recieving response
     if (buttonFold.disabled == false){
       let dict_data = {
         "user": playerList[playerList['dealer']+1][0],
-        "new_money": -50
+        "new_money": -50,
+        'room': room_code
       }
       let data = JSON.stringify(dict_data);
       socket.emit('update_money', {'data': data});
       let dict_data2 = {
         "user": playerList[playerList['dealer']+2][0],
-        "new_money": -100
+        "new_money": -100,
+        'room': room_code
       }
       let data2 = JSON.stringify(dict_data2);
       socket.emit('update_money', {'data': data2});
@@ -162,9 +164,11 @@ function start(playerTurn, playerList){
 }
 
 function sendFoldMessage(){
+  let money = pot.innerHTML;
+  money = money.slice(1);
   let dict_data = {
     "user" : username,
-    "pot" : pot.innerHTML,
+    "pot" : parseInt(money),
     "room" : room_code
   }
   let data = JSON.stringify(dict_data);
@@ -401,81 +405,11 @@ let p4c2 = document.getElementById("p4c2");
 let p5c1 = document.getElementById("p5c1");
 let p5c2 = document.getElementById("p5c2");
 
-function checkGameState(gameState){
-  if (gameState == 1){
-    revealFlop();
-  }
-  if (gameState == 2){
-    revealTurn();
-  }
-  if (gameState == 3){
-    revealRiver();
-  }
-  if (gameState == 4){
-    revealCards();
-    buttonFold.disabled = true;
-    buttonCheck.disabled = true;
-    buttonCall.disabled = true;
-    buttonRaise.disabled = true;
-    // endGame();
-  }
-}
-
-function revealCards(){
-  $.get("/reveal_cards", {room_code: room_code}, function(cards) {
-      let cardDict = JSON.parse(cards);
-      let numPlayers = cardDict['length'];
-      if (numPlayers > 0){
-        p1c1.src = cardDict["p1c1"];
-        p1c2.src = cardDict["p1c2"];
-      }
-      if (numPlayers > 1){
-        p2c1.src = cardDict["p2c1"];
-        p2c2.src = cardDict["p2c2"];
-      }
-      if (numPlayers > 2){
-        p3c1.src = cardDict["p3c1"];
-        p3c2.src = cardDict["p3c2"];
-      }
-      if (numPlayers > 3){
-        p4c1.src = cardDict["p4c1"];
-        p4c2.src = cardDict["p4c2"];
-      }
-      if (numPlayers > 4){
-        p5c1.src = cardDict["p5c1"];
-        p5c2.src = cardDict["p5c2"];
-      }
-    });
-}
-
 let commc1 = document.getElementById("commc1");
 let commc2 = document.getElementById("commc2");
 let commc3 = document.getElementById("commc3");
 let commc4 = document.getElementById("commc4");
 let commc5 = document.getElementById("commc5");
-
-function revealFlop(){
-  $.get("/flop", {room_code: room_code}, function(flop) {
-      let flopDict = JSON.parse(flop);
-      commc1.src = flopDict["1"];
-      commc2.src = flopDict["2"];
-      commc3.src = flopDict["3"];
-    });
-}
-
-function revealTurn(){
-  $.get("/turn", {room_code: room_code}, function(turn) {
-      let turnDict = JSON.parse(turn);
-      commc4.src = turnDict["1"];
-    });
-}
-
-function revealRiver(){
-  $.get("/river", {room_code: room_code}, function(river) {
-      let riverDict = JSON.parse(river);
-      commc5.src = riverDict["1"];
-    });
-}
 
 });
 
