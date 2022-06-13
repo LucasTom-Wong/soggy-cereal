@@ -118,7 +118,7 @@ socket.on("response", function(msg){ //when recieving response
     if (buttonFold.disabled == false){
       let dict_data = {
         "user": playerList[playerList['dealer']+1][0],
-        "new_money": -50,
+        "new_money": 50,
         'room': room_code
       }
       let data = JSON.stringify(dict_data);
