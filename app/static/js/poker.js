@@ -213,8 +213,15 @@ socket.on('fold_response', function(msg){
     commc2.src = parsedResponse["2"];
     commc3.src = parsedResponse["3"];
   }else if (parsedResponse['gameState'] == 2){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
     commc4.src = parsedResponse["4"];
   }else if (parsedResponse['gameState'] == 3){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+    commc4.src = parsedResponse["4"];
     commc5.src = parsedResponse['5'];
   }
   console.log(parsedResponse['fold_user'] + " folded")
@@ -235,26 +242,36 @@ function sendKickMessage(){
 }
 
 function sendCheckMessage(){
-  $.get("/previous_bet", {room_code: room_code}, function(bet) {
-    let previous_bet = JSON.parse(bet);
-    let check = previous_bet['bet'];
-    let dict_data = {
-      "user" : username,
-      "room" : room_code
-    }
-    let data = JSON.stringify(dict_data);
-    if (check){
-      socket.emit("check_event", {data: data});
-      console.log("checking server");
-    }
-  });
+  let dict_data = {
+    "user" : username,
+    "room" : room_code
+  }
+  let data = JSON.stringify(dict_data);
+  socket.emit("check_event", {data: data});
+  console.log("checking server");
 }
+
 
 socket.on('check_response', function(msg){
   resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
-  checkGameState(parsedResponse['gameState']);
+  if (parsedResponse['gameState'] == 1){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+  }else if (parsedResponse['gameState'] == 2){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+    commc4.src = parsedResponse["4"];
+  }else if (parsedResponse['gameState'] == 3){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+    commc4.src = parsedResponse["4"];
+    commc5.src = parsedResponse['5'];
+  }
   updateButtons(document.getElementById("username").innerHTML, parsedResponse["next_user"]);
 });
 
@@ -272,7 +289,22 @@ socket.on('call_response', function(msg){
   resetTimer();
   let response = msg.data;
   let parsedResponse = JSON.parse(msg["data"]);
-  checkGameState(parsedResponse['gameState']);
+  if (parsedResponse['gameState'] == 1){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+  }else if (parsedResponse['gameState'] == 2){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+    commc4.src = parsedResponse["4"];
+  }else if (parsedResponse['gameState'] == 3){
+    commc1.src = parsedResponse["1"];
+    commc2.src = parsedResponse["2"];
+    commc3.src = parsedResponse["3"];
+    commc4.src = parsedResponse["4"];
+    commc5.src = parsedResponse['5'];
+  }
   let currentBet = parseInt((document.getElementById("bet"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let currentMoney = parseInt((document.getElementById("money"+(parsedResponse['current_turn'])).innerHTML).slice(1));
   let betDifference = parseInt(parsedResponse['previous_bet'])-currentBet;

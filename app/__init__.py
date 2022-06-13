@@ -271,7 +271,7 @@ def fold_message_global(message):
                 "fold_user" : x['user'],
                 "current_turn" : current,
                 "next_turn" : playerList['turn'],
-                "next_user" : playerList['turn'],
+                "next_user" : playerList[playerList['turn']][0],
                 "1":room.returnDeck()[47],
                 "2":room.returnDeck()[48],
                 "3":room.returnDeck()[49],
@@ -284,6 +284,9 @@ def fold_message_global(message):
                 "current_turn" : current,
                 "next_turn" : playerList['turn'],
                 "next_user" : playerList[playerList['turn']][0],
+                "1":room.returnDeck()[47],
+                "2":room.returnDeck()[48],
+                "3":room.returnDeck()[49],
                 "4":room.returnDeck()[50],
             }
         elif (playerList['gameState'] == 3):
@@ -294,6 +297,10 @@ def fold_message_global(message):
                 "current_turn" : current,
                 "next_turn" : playerList['turn'],
                 "next_user" : playerList[playerList['turn']][0],
+                "1":room.returnDeck()[47],
+                "2":room.returnDeck()[48],
+                "3":room.returnDeck()[49],
+                "4":room.returnDeck()[50],
                 "5":room.returnDeck()[51],
             }
         else:
@@ -341,14 +348,54 @@ def kick_message_global(message):
     if (playerList['turn'] == playerList['start_turn']):
         room.updatePlayerList('gameState', playerList['gameState']+1)
         room.updatePlayerList('check', True)
-    returnMessage = {
-        "data-type" : "console message",
-        "gameState" : playerList['gameState'],
-        "fold_user" : playerList[current][0],
-        "current_turn" : current,
-        "next_turn" : playerList['turn'],
-        "next_user" : playerList[playerList['turn']][0]
-    }
+    if (playerList['gameState'] == 1):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "fold_user" : playerList[current][0],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+        }
+    elif (playerList['gameState'] == 2):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "fold_user" : playerList[current][0],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+        }
+    elif (playerList['gameState'] == 3):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "fold_user" : playerList[current][0],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+            "5":room.returnDeck()[51],
+        }
+    else:
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "fold_user" : playerList[current][0],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0]
+        }
     y = json.dumps(returnMessage)
 
     if (len(playerList['folded']) >= 4):
@@ -384,19 +431,59 @@ def check_message_global(message):
     if (playerList['turn'] == playerList['start_turn']):
         room.updatePlayerList('gameState', playerList['gameState']+1)
         room.updatePlayerList('check', True)
-    returnMessage = {
-        "data-type" : "console message",
-        "gameState" : playerList['gameState'],
-        "bet" : playerList['check'],
-        "current_turn" : current,
-        "next_turn" : playerList['turn'],
-        "next_user" : playerList[playerList['turn']][0]
-    }
+
+    if (playerList['gameState'] == 1):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "bet" : playerList['check'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+        }
+    elif (playerList['gameState'] == 2):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "bet" : playerList['check'],
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+        }
+    elif (playerList['gameState'] == 3):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "bet" : playerList['check'],
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+            "5":room.returnDeck()[51],
+        }
+    else:
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "bet" : playerList['check'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0]
+        }
     y = json.dumps(returnMessage)
     room_code = x.get("room")
-    emit('check_response',
-         {'data': y, 'count': session['receive_count']},
-         broadcast=True, to=room_code)
+    if (playerList['check']):
+        emit('check_response',
+            {'data': y, 'count': session['receive_count']},
+            broadcast=True, to=room_code)
 
 @socket_.on("call_event", namespace="/test")
 def call_message_global(message):
@@ -419,15 +506,59 @@ def call_message_global(message):
     if (playerList['turn'] == playerList['start_turn']):
         room.updatePlayerList('gameState', playerList['gameState']+1)
         room.updatePlayerList('check', True)
-    returnMessage = {
-        "data-type" : "console message",
-        "gameState" : playerList['gameState'],
-        "call_user" : x['user'],
-        "previous_bet" : playerList['previous_bet'],
-        "current_turn" : current,
-        "next_turn" : playerList['turn'],
-        "next_user" : playerList[playerList['turn']][0]
-    }
+
+    if (playerList['gameState'] == 1):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "call_user" : x['user'],
+            "previous_bet" : playerList['previous_bet'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+        }
+    elif (playerList['gameState'] == 2):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "call_user" : x['user'],
+            "previous_bet" : playerList['previous_bet'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+        }
+    elif (playerList['gameState'] == 3):
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "call_user" : x['user'],
+            "previous_bet" : playerList['previous_bet'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+            "1":room.returnDeck()[47],
+            "2":room.returnDeck()[48],
+            "3":room.returnDeck()[49],
+            "4":room.returnDeck()[50],
+            "5":room.returnDeck()[51],
+        }
+    else:
+        returnMessage = {
+            "data-type" : "console message",
+            "gameState" : playerList['gameState'],
+            "call_user" : x['user'],
+            "previous_bet" : playerList['previous_bet'],
+            "current_turn" : current,
+            "next_turn" : playerList['turn'],
+            "next_user" : playerList[playerList['turn']][0],
+        }
     y = json.dumps(returnMessage)
     room_code = x.get("room")
     emit('call_response',
